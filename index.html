@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="2026.11.21-1">
+<meta name="app-version" content="2026.11.21-2">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#FFF9F5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,7 +13,7 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <!-- 보안: 아래 script-src 의 sha256 두 개는 이 파일 안 인라인 스크립트 두 덩어리의 해시. 스크립트를 고치면 해시도 다시 계산해서 바꿔야 앱이 열림 -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IPTHRSGmeYrNSOO3QK4KY36tTY/VnE+Mx7/hZB8FcZs=' 'sha256-N2yQnYYqN1y5PRfMDmRVRxOoC9TEGMUjjroodjjtX+A=' https://dapi.kakao.com https://*.kakaocdn.net https://*.daumcdn.net https://cdn.jsdelivr.net; connect-src 'self' https://wqzndhwuylzpgauoldpv.supabase.co wss://wqzndhwuylzpgauoldpv.supabase.co https://*.kakao.com https://*.kakaocdn.net https://*.daum.net https://*.daumcdn.net https://api.open-meteo.com https://archive-api.open-meteo.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self'; manifest-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IPTHRSGmeYrNSOO3QK4KY36tTY/VnE+Mx7/hZB8FcZs=' 'sha256-Fhhrqyf97Cljmqt2ON0AR05gIlJ4r1xOphiVRYC24S4=' https://dapi.kakao.com https://*.kakaocdn.net https://*.daumcdn.net https://cdn.jsdelivr.net; connect-src 'self' https://wqzndhwuylzpgauoldpv.supabase.co wss://wqzndhwuylzpgauoldpv.supabase.co https://*.kakao.com https://*.kakaocdn.net https://*.daum.net https://*.daumcdn.net https://api.open-meteo.com https://archive-api.open-meteo.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self'; manifest-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <title>맛집로그</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -728,17 +728,19 @@ const LS = nsStore(() => window.localStorage), SS = nsStore(() => window.session
 /* =========================================================
    설정값
    ========================================================= */
-const KINDS = ['한식', '양식', '일식', '중식', '아시안', '패스트푸드', '기타'];
+const KINDS = ['한식', '양식', '일식', '중식', '아시안', '분식', '패스트푸드', '술집', '기타'];
 // 종류: 식당 정보에서 고른 값 → 없으면 카카오 분류(음식점 > 한식 > …)로 자동
 const autoKind = cat => {
   const s = cat || ''; if (!s) return '';
+  if (/술집|주점|호프|이자카야|포장마차|와인바|칵테일바|맥주/.test(s)) return '술집';
   if (/패스트푸드|햄버거|치킨|핫도그/.test(s)) return '패스트푸드';
-  if (/일식|일본식|초밥|스시|돈까스|돈가스|라멘|우동|이자카야/.test(s)) return '일식';
+  if (/분식|떡볶이|김밥/.test(s)) return '분식';
+  if (/일식|일본식|초밥|스시|돈까스|돈가스|라멘|우동/.test(s)) return '일식';
   if (/중식|중국요리|양꼬치|마라/.test(s)) return '중식';
   if (/아시아|베트남|태국|인도|동남아|쌀국수|멕시|터키|중동/.test(s)) return '아시안';
   if (/양식|이탈리|프랑스|스페인|스테이크|파스타|패밀리레스토랑/.test(s)) return '양식';
   if (/피자|샌드위치|토스트/.test(s)) return '패스트푸드';
-  if (/한식|분식|국밥|해장국|고기|해물|생선|찌개|냉면|삼계탕|족발|보쌈|백반|칼국수|국수/.test(s)) return '한식';
+  if (/한식|국밥|해장국|고기|해물|생선|찌개|냉면|삼계탕|족발|보쌈|백반|칼국수|국수/.test(s)) return '한식';
   return '기타';
 };
 const kindOf = c => (c && (c.kind || autoKind(c.category))) || '';
@@ -4233,7 +4235,7 @@ async function refreshAll(){
 /* =========================================================
    앱 업데이트 (홈 화면에 깔린 앱이 옛 화면을 붙잡고 있을 때)
    ========================================================= */
-const APP_VERSION = '2026.11.21-1'; // 고칠 때마다 올림
+const APP_VERSION = '2026.11.21-2'; // 고칠 때마다 올림
 // 새 버전 확인: 파일 맨 앞 2KB만 받아서 버전 표시만 읽음 (안 되면 전체를 받아 확인)
 async function latestVersion(){
   try {

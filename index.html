@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="2026.11.21-2">
+<meta name="app-version" content="2026.11.21-3">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#FFF9F5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,7 +13,7 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <!-- 보안: 아래 script-src 의 sha256 두 개는 이 파일 안 인라인 스크립트 두 덩어리의 해시. 스크립트를 고치면 해시도 다시 계산해서 바꿔야 앱이 열림 -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IPTHRSGmeYrNSOO3QK4KY36tTY/VnE+Mx7/hZB8FcZs=' 'sha256-Fhhrqyf97Cljmqt2ON0AR05gIlJ4r1xOphiVRYC24S4=' https://dapi.kakao.com https://*.kakaocdn.net https://*.daumcdn.net https://cdn.jsdelivr.net; connect-src 'self' https://wqzndhwuylzpgauoldpv.supabase.co wss://wqzndhwuylzpgauoldpv.supabase.co https://*.kakao.com https://*.kakaocdn.net https://*.daum.net https://*.daumcdn.net https://api.open-meteo.com https://archive-api.open-meteo.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self'; manifest-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IPTHRSGmeYrNSOO3QK4KY36tTY/VnE+Mx7/hZB8FcZs=' 'sha256-UmUWghglT1JXJDCzEFZ4A0I3yREK16HqiHt4JH30dzI=' https://dapi.kakao.com https://*.kakaocdn.net https://*.daumcdn.net https://cdn.jsdelivr.net; connect-src 'self' https://wqzndhwuylzpgauoldpv.supabase.co wss://wqzndhwuylzpgauoldpv.supabase.co https://*.kakao.com https://*.kakaocdn.net https://*.daum.net https://*.daumcdn.net https://api.open-meteo.com https://archive-api.open-meteo.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self'; manifest-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <title>맛집로그</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -842,15 +842,30 @@ const CUP_ARTS = (() => {
 `<path d="M16 26c-6.6 0-11.5-3.4-11.5-8.4 0-3.4 3-6.2 6.6-5.8.8-2.8 2.6-4.3 4.9-4.3s4.1 1.5 4.9 4.3c3.6-.4 6.6 2.4 6.6 5.8 0 5-4.9 8.4-11.5 8.4z" fill="#fff" ${S}/><circle cx="16" cy="17.5" r="4.6" fill="#FFC23A" ${S}/><path d="M14 15.6a2.6 2.6 0 0 1 2.4-1.2" fill="none" stroke="#FFE8A0" stroke-width="1.2" stroke-linecap="round"/><circle cx="14.6" cy="17.6" r=".8" fill="#5A3E2B"/><circle cx="17.6" cy="17.6" r=".8" fill="#5A3E2B"/><path d="M15.4 19.2a1.2 1.2 0 0 0 1.6 0" fill="none" stroke="#5A3E2B" stroke-width="1" stroke-linecap="round"/>`,
 `<ellipse cx="16" cy="26.5" rx="12" ry="2.2" fill="#fff" ${S}/><path d="M6.5 25.5c-1-2 0-3.6 2-3.6l14-11c1.6-1.3 3.4-.8 4.2.6.8 1.4.3 3.2-1.3 4L11 25.5z" fill="#F4C35A" ${S}/><path d="M11 21.5l1.6 1.4M14.4 18.8l1.6 1.4M17.8 16.1l1.6 1.4M21.2 13.4l1.6 1.4" stroke="#C98A2E" stroke-width="1.2" stroke-linecap="round"/><path d="M25 11.2c1.4-2.8 3.2-3.4 4-2.6.6.8-.2 2.6-2.4 4" fill="#F28B6B" ${S}/><path d="M4.5 25.6c2.5 1 5.6.6 7-.6" fill="none" stroke="#8DCB6E" stroke-width="1.6" stroke-linecap="round"/>`,
 `<path d="M8 12h16l-1.6 15H9.6z" fill="#fff" ${S}/><path d="M8.6 17.5h14.8" stroke="#E25B5B" stroke-width="2" /><path d="M9.2 22.5h13.6" stroke="#E25B5B" stroke-width="2"/><path d="M10.5 12V7.5M14 12V5.5M17.5 12V6.5M21 12V8" stroke="#5A3E2B" stroke-width="3.6" stroke-linecap="round"/><path d="M10.5 12V7.5M14 12V5.5M17.5 12V6.5M21 12V8" stroke="#FFD23F" stroke-width="2" stroke-linecap="round"/>`,
-`<path d="M7 9.5h18l-2.5 18h-13z" fill="#FFE7A8" ${S}/><path d="M6.5 9.5h19" stroke="#5A3E2B" stroke-width="1.4" stroke-linecap="round"/><path d="M9.5 9.5c0-3 2.6-5.2 6.5-5.2s6.5 2.2 6.5 5.2" fill="#fff" ${S}/><path d="M12.6 7.2c.8-.8 1.8-1.2 3-1.2" fill="none" stroke="#F2D9B8" stroke-width="1.1" stroke-linecap="round"/><path d="M8.4 14h15.2l-.4 2.6H8.8z" fill="#F4A259"/><circle cx="13" cy="21" r="1.1" fill="#5A3E2B"/><circle cx="19" cy="21" r="1.1" fill="#5A3E2B"/><path d="M14.6 23.3a1.8 1.8 0 0 0 2.8 0" fill="none" stroke="#5A3E2B" stroke-width="1.2" stroke-linecap="round"/>`];
+`<path d="M7 9.5h18l-2.5 18h-13z" fill="#FFE7A8" ${S}/><path d="M6.5 9.5h19" stroke="#5A3E2B" stroke-width="1.4" stroke-linecap="round"/><path d="M9.5 9.5c0-3 2.6-5.2 6.5-5.2s6.5 2.2 6.5 5.2" fill="#fff" ${S}/><path d="M12.6 7.2c.8-.8 1.8-1.2 3-1.2" fill="none" stroke="#F2D9B8" stroke-width="1.1" stroke-linecap="round"/><path d="M8.4 14h15.2l-.4 2.6H8.8z" fill="#F4A259"/><circle cx="13" cy="21" r="1.1" fill="#5A3E2B"/><circle cx="19" cy="21" r="1.1" fill="#5A3E2B"/><path d="M14.6 23.3a1.8 1.8 0 0 0 2.8 0" fill="none" stroke="#5A3E2B" stroke-width="1.2" stroke-linecap="round"/>`,
+`<path d="M20 3.5l-3 11.5M24 4.5l-5 11" stroke="#C98A4E" stroke-width="1.6" stroke-linecap="round"/><path d="M4 15h24a12 12 0 0 1-24 0z" fill="#fff" ${S}/><ellipse cx="16" cy="15" rx="12" ry="2.6" fill="#3B2A22" ${S}/><path d="M8.5 14.6c1-1 2-1 3 0s2 1 3 0 2-1 3 0" fill="none" stroke="#7A5442" stroke-width="1.1" stroke-linecap="round"/><path d="M19 13.8l3.6-.7M19.4 15.4l3.4-.3" stroke="#8DCB6E" stroke-width="1.3" stroke-linecap="round"/><path d="M6.4 19.2h19.2" stroke="#E25B5B" stroke-width="1.3" stroke-dasharray="1.6 1.6"/><circle cx="12" cy="22.3" r="1.1" fill="#5A3E2B"/><circle cx="20" cy="22.3" r="1.1" fill="#5A3E2B"/><path d="M14.6 24.4a1.8 1.8 0 0 0 2.8 0" fill="none" stroke="#5A3E2B" stroke-width="1.2" stroke-linecap="round"/>`,
+`<ellipse cx="16" cy="21" rx="13" ry="6.5" fill="#fff" ${S}/><circle cx="10.5" cy="19.2" r="3.2" fill="#E8A54B" ${S}/><circle cx="16.8" cy="17.4" r="3.2" fill="#E8A54B" ${S}/><circle cx="21.8" cy="20.6" r="3.2" fill="#E8A54B" ${S}/><circle cx="15" cy="22.6" r="3" fill="#E8A54B" ${S}/><path d="M8.5 17.4c3 2.2 6.6 1.4 8.6-.6s4.4-1.2 5.4 1.2" fill="none" stroke="#F2795A" stroke-width="1.7" stroke-linecap="round"/><circle cx="12.8" cy="21.4" r=".9" fill="#FFD23F"/><circle cx="19.6" cy="19.2" r=".9" fill="#8DCB6E"/><circle cx="17.8" cy="22.8" r=".9" fill="#F28B4B"/><path d="M11 9.5c-.8 1 .8 1.8 0 3M16 8.5c-.8 1 .8 1.8 0 3M21 9.5c-.8 1 .8 1.8 0 3" ${T}/>`,
+`<path d="M11 4.5c-.8 1 .8 1.8 0 3M16 3.5c-.8 1 .8 1.8 0 3M21 4.5c-.8 1 .8 1.8 0 3" ${T}/><path d="M6 15.5c0-3.2 2.2-5.4 5-5.4s5 2.2 5 5.4z" fill="#fff" ${S}/><path d="M9.6 10.6l.8 1.6M11 10.2v1.8M12.4 10.6l-.8 1.6" stroke="#E0D2C4" stroke-width="1" stroke-linecap="round"/><path d="M16 15.5c0-3.2 2.2-5.4 5-5.4s5 2.2 5 5.4z" fill="#FFE1D0" ${S}/><path d="M19.6 10.6l.8 1.6M21 10.2v1.8M22.4 10.6l-.8 1.6" stroke="#F2B8A0" stroke-width="1" stroke-linecap="round"/><path d="M3.5 15.5h25v6.5a4.5 4.5 0 0 1-4.5 4.5H8a4.5 4.5 0 0 1-4.5-4.5z" fill="#E8C48A" ${S}/><path d="M3.6 19h24.8M3.8 22.6h24.4" stroke="#C49A5A" stroke-width="1"/><path d="M9 15.6v10.8M16 15.6v10.8M23 15.6v10.8" stroke="#C49A5A" stroke-width=".8"/>`,
+`<path d="M21.5 3.5l-4.5 11.5M25.5 5l-6.5 10" stroke="#C98A4E" stroke-width="1.6" stroke-linecap="round"/><path d="M3.5 15h25c0 6.6-5.6 12-12.5 12S3.5 21.6 3.5 15z" fill="#fff" ${S}/><ellipse cx="16" cy="15" rx="12.5" ry="2.8" fill="#F7D9A0" ${S}/><path d="M7.5 14.6c1.4.8 3 .8 4.4 0M13.5 15.6c1.4.8 3 .8 4.4 0" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/><path d="M9.5 13.6l3.6-1 .8 1.2-3.6 1z" fill="#B9705A"/><path d="M15.5 13.2l3-.8.8 1.1-3 .9z" fill="#B9705A"/><path d="M19.5 15.8l1.6-1.4M21.2 16l.4-1.8M11.6 16.4l1.4-1" stroke="#6DBE8C" stroke-width="1.3" stroke-linecap="round"/><path d="M22.5 12.8a3.2 3.2 0 0 1 4.6 2.4h-4.6z" fill="#B8D86B" stroke="#5A3E2B" stroke-width="1" stroke-linejoin="round"/><path d="M6.5 19.6h19" stroke="#5BA3D9" stroke-width="1.3" stroke-dasharray="2 1.6"/>`,
+`<ellipse cx="16" cy="20" rx="13.5" ry="7" fill="#fff" ${S}/><path d="M14.8 19.6c.8-3.8 3.8-5.4 7-5.4s5.2 2.2 5.2 5.2-3 4.6-6.6 4.6-6.2-1.4-5.6-4.4z" fill="#E8A030" ${S}/><rect x="19" y="17.2" width="2.6" height="2.6" rx=".7" fill="#F28B4B" transform="rotate(12 20.3 18.5)"/><rect x="22.8" y="19.4" width="2.6" height="2.6" rx=".7" fill="#FFE7A8" transform="rotate(-10 24.1 20.7)"/><rect x="18.4" y="21" width="2.2" height="2.2" rx=".6" fill="#9BCB6E"/><path d="M5.2 20c0-4 2.6-6.6 6.2-6.6s5.6 2.6 5.6 6.6c0 2.6-2.6 4.2-5.9 4.2S5.2 22.6 5.2 20z" fill="#fff" ${S}/><circle cx="9.4" cy="19.2" r=".9" fill="#5A3E2B"/><circle cx="13" cy="19.2" r=".9" fill="#5A3E2B"/><path d="M10.4 21a1.4 1.4 0 0 0 1.8 0" fill="none" stroke="#5A3E2B" stroke-width="1" stroke-linecap="round"/>`,
+`<ellipse cx="16" cy="26" rx="12.5" ry="2.2" fill="#fff" ${S}/><path d="M5.6 24.2c-1.6-1.6-.8-3.8 1.4-4.8L22.6 8.6c2.4-1.4 5-.2 5 2.2 0 1.4-.9 2.4-2.4 3.4L10.4 25c-1.8 1.2-3.6 1-4.8-.8z" fill="#E8A54B" ${S}/><path d="M7.8 21.8L25 10.6" stroke="#8DCB6E" stroke-width="2.2" stroke-linecap="round"/><path d="M8.8 23.2L25.8 12.2" stroke="#F28B6B" stroke-width="1.3" stroke-linecap="round"/><path d="M12.5 17.4l1.4-.4M16.4 14.8l1.4-.4M20.2 12.2l1.4-.4" stroke="#C47A2C" stroke-width="1.1" stroke-linecap="round"/>`,
+`<path d="M21 13h2.6a3 3 0 0 1 3 3v3.4a3 3 0 0 1-3 3H21" fill="none" stroke="#5A3E2B" stroke-width="1.8"/><path d="M6.5 9.5h14.5v15.8a2.8 2.8 0 0 1-2.8 2.8H9.3a2.8 2.8 0 0 1-2.8-2.8z" fill="#FFC23A" ${S}/><circle cx="10" cy="22" r=".9" fill="#FFF3CF"/><circle cx="17.6" cy="24.4" r=".7" fill="#FFF3CF"/><circle cx="16.4" cy="14.2" r=".7" fill="#FFF3CF"/><path d="M5.6 10.6c-.4-2.6 1.6-4 3.4-3.4.8-1.8 3.2-2.4 4.6-1.2 1.6-1.4 4.2-.8 5 .8 2.4-.2 3.6 1.8 2.8 3.8z" fill="#fff" ${S}/><circle cx="11.2" cy="17.8" r="1.1" fill="#5A3E2B"/><circle cx="16.4" cy="17.8" r="1.1" fill="#5A3E2B"/><path d="M12.4 20a1.8 1.8 0 0 0 2.8 0" fill="none" stroke="#5A3E2B" stroke-width="1.2" stroke-linecap="round"/>`,
+`<rect x="9.4" y="2.6" width="5.2" height="2.8" rx=".9" fill="#2F8F5B" ${S}/><path d="M10 5.4h4v3c0 1.2 3.2 2.2 3.2 5.4v12.4a2 2 0 0 1-2 2H8.8a2 2 0 0 1-2-2V13.8c0-3.2 3.2-4.2 3.2-5.4z" fill="#8FD8A8" ${S}/><path d="M8.4 13.4c.4-1.4 1.4-2.2 2.4-2.8" fill="none" stroke="#D8F3E2" stroke-width="1.2" stroke-linecap="round"/><rect x="7.6" y="16" width="8.8" height="6.4" rx="1.2" fill="#fff" stroke="#5A3E2B" stroke-width="1"/><circle cx="10.4" cy="18.8" r=".8" fill="#5A3E2B"/><circle cx="13.6" cy="18.8" r=".8" fill="#5A3E2B"/><path d="M11.3 20.2a1 1 0 0 0 1.4 0" fill="none" stroke="#5A3E2B" stroke-width=".9" stroke-linecap="round"/><path d="M19.4 19.5h7.2l-1 7.6a1 1 0 0 1-1 .9h-3.2a1 1 0 0 1-1-.9z" fill="#E9F6F0" ${S}/><path d="M20 22.4h6l-.6 4.5h-4.8z" fill="#fff"/>`,
+`<path d="M18.5 2.5l-2.2 12.5" stroke="#E25B5B" stroke-width="1.6" stroke-linecap="round"/><path d="M8.5 7h15l-1.6 19.2a2 2 0 0 1-2 1.8h-7.8a2 2 0 0 1-2-1.8z" fill="#FFF8E8" ${S}/><path d="M9.2 12h13.6l-1.2 14.1a1.2 1.2 0 0 1-1.2 1.1h-8.8a1.2 1.2 0 0 1-1.2-1.1z" fill="#F4C35A"/><rect x="11.5" y="13.4" width="4.2" height="4.2" rx="1" fill="#fff" opacity=".85" transform="rotate(-12 13.6 15.5)"/><rect x="15.8" y="16.6" width="4" height="4" rx="1" fill="#fff" opacity=".85" transform="rotate(10 17.8 18.6)"/><circle cx="12" cy="22.6" r=".8" fill="#FFF3CF"/><circle cx="18.6" cy="24.2" r=".7" fill="#FFF3CF"/><circle cx="23.4" cy="7.6" r="3.4" fill="#FFE45C" ${S}/><path d="M23.4 5v5.2M20.8 7.6H26" stroke="#F2C230" stroke-width=".8"/>`,
+`<ellipse cx="16" cy="21" rx="13.5" ry="6.5" fill="#fff" ${S}/><path d="M6.5 19.4c0-3.6 3.2-6 7.8-6 5 0 9.2 2 9.2 5.4 0 3.1-3.2 4.6-8.2 4.6S6.5 22.6 6.5 19.4z" fill="#8B4A32" ${S}/><path d="M7.6 18.4c1-2.8 3.8-4.4 6.6-4.4" fill="none" stroke="#F2D9C4" stroke-width="1.3" stroke-linecap="round"/><path d="M11.4 15.6l2.6 5.6M15.4 14.8l2.8 6.4M19.4 15.4l2.2 5" stroke="#5E2F1F" stroke-width="1.2" stroke-linecap="round"/><circle cx="24.6" cy="22.4" r="2" fill="#6DBE8C" stroke="#5A3E2B" stroke-width="1"/><circle cx="21.6" cy="24.4" r="1.4" fill="#F28B4B" stroke="#5A3E2B" stroke-width="1"/><path d="M11 9.5c-.8 1 .8 1.8 0 3M16 8.5c-.8 1 .8 1.8 0 3M21 9.5c-.8 1 .8 1.8 0 3" ${T}/>`,
+`<path d="M5.6 16c0-3.4 2.4-5.4 5.2-5.2.8-2.2 3.2-3.4 5.4-2.6 1.6-1.6 4.8-1.2 5.8 1.2 2.6 0 4.4 2.4 4.4 6.6z" fill="#8DCB6E" ${S}/><path d="M9.4 13.6c1.2-.8 2.4-1 3.6-.6M17 11.4c1.2-.4 2.4-.2 3.4.6" fill="none" stroke="#C9EBB4" stroke-width="1.1" stroke-linecap="round"/><circle cx="12.4" cy="13.4" r="1.9" fill="#E25B5B" stroke="#5A3E2B" stroke-width="1"/><circle cx="20.4" cy="13" r="2.1" fill="#fff" stroke="#5A3E2B" stroke-width="1"/><circle cx="20.4" cy="13" r=".9" fill="#FFC23A"/><path d="M4 16h24a12 11 0 0 1-24 0z" fill="#fff" ${S}/><circle cx="12" cy="21" r="1.1" fill="#5A3E2B"/><circle cx="20" cy="21" r="1.1" fill="#5A3E2B"/><path d="M14.6 23.1a1.8 1.8 0 0 0 2.8 0" fill="none" stroke="#5A3E2B" stroke-width="1.2" stroke-linecap="round"/><ellipse cx="10.2" cy="23" rx="1.1" ry=".6" fill="#F7A8C0"/><ellipse cx="21.8" cy="23" rx="1.1" ry=".6" fill="#F7A8C0"/>`,
+`<path d="M16 29.5V4" stroke="#C98A4E" stroke-width="1.6" stroke-linecap="round"/><path d="M9.6 6.4c3.2-1 9.6-1 12.8 0-2 1.8-2 3.2 0 5-3.2 1-9.6 1-12.8 0 2-1.8 2-3.2 0-5z" fill="#F2C38B" ${S}/><path d="M9.6 12.8c3.2-1 9.6-1 12.8 0-2 1.8-2 3.2 0 5-3.2 1-9.6 1-12.8 0 2-1.8 2-3.2 0-5z" fill="#F2C38B" ${S}/><path d="M9.6 19.2c3.2-1 9.6-1 12.8 0-2 1.8-2 3.2 0 5-3.2 1-9.6 1-12.8 0 2-1.8 2-3.2 0-5z" fill="#F2C38B" ${S}/><circle cx="13.8" cy="15" r=".9" fill="#5A3E2B"/><circle cx="18.2" cy="15" r=".9" fill="#5A3E2B"/><path d="M15.2 16.5a1.2 1.2 0 0 0 1.6 0" fill="none" stroke="#5A3E2B" stroke-width="1" stroke-linecap="round"/>`,
+`<path d="M16 4.5c2 0 3.5 1.2 4.6 3l7 12.3c1.6 2.8-.3 6.2-3.6 6.2H8c-3.3 0-5.2-3.4-3.6-6.2l7-12.3c1.1-1.8 2.6-3 4.6-3z" fill="#fff" ${S}/><path d="M10.2 26v-5.8c0-1 .8-1.8 1.8-1.8h8c1 0 1.8.8 1.8 1.8V26z" fill="#2F3B2E" ${S}/><circle cx="13.4" cy="13.8" r="1" fill="#5A3E2B"/><circle cx="18.6" cy="13.8" r="1" fill="#5A3E2B"/><path d="M14.8 15.8a1.6 1.6 0 0 0 2.4 0" fill="none" stroke="#5A3E2B" stroke-width="1.1" stroke-linecap="round"/><ellipse cx="11.8" cy="15.6" rx="1" ry=".6" fill="#F7A8C0"/><ellipse cx="20.2" cy="15.6" rx="1" ry=".6" fill="#F7A8C0"/>`];
 })();
+const KIND_ARTS = { '한식': [0, 2, 13], '양식': [12, 11, 27, 28, 14], '일식': [3, 1, 15, 30], '중식': [8, 18, 19, 20], '아시안': [21, 22, 23, 17], '분식': [9, 10, 29], '패스트푸드': [4, 5, 6, 16], '술집': [24, 25, 26, 7] };
 const coverOf = (c, st) => (st || cafeStats(c)).photos.includes(c.coverPhotoId) ? c.coverPhotoId : (st || cafeStats(c)).photos[0];
 const cupDay = () => Math.floor((Date.now() + 9 * 3600e3) / 86400e3);
-function cupIcon(id){
+function cupIcon(id, c){
   let h = (cupDay() * 2654435761) >>> 0;
   for (const ch of String(id)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0;
   h ^= h >>> 15; h = Math.imul(h, 2246822519) >>> 0; h ^= h >>> 13;
-  return `<svg class="cup" viewBox="0 0 32 32" aria-hidden="true">${CUP_ARTS[(h >>> 0) % CUP_ARTS.length]}</svg>`;
+  const pool = KIND_ARTS[kindOf(c || cafes.find(x => x.id === id))];
+  return `<svg class="cup" viewBox="0 0 32 32" aria-hidden="true">${pool ? CUP_ARTS[pool[(h >>> 0) % pool.length]] : CUP_ARTS[(h >>> 0) % CUP_ARTS.length]}</svg>`;
 }
 function hashRot(id, i){ let h = 0; for (const c of (id+i)) h = (h*31 + c.charCodeAt(0)) | 0; return ((Math.abs(h) % 9) - 4) * 0.9; }
 function distKm(a, b){ const R=6371, t=x=>x*Math.PI/180; const dLa=t(b.lat-a.lat), dLo=t(b.lng-a.lng); const s=Math.sin(dLa/2)**2+Math.cos(t(a.lat))*Math.cos(t(b.lat))*Math.sin(dLo/2)**2; return 2*R*Math.asin(Math.sqrt(s)); }
@@ -1097,7 +1112,7 @@ async function refreshPins(){
     if (o) o.setMap(null);
     const el = document.createElement('div');
     el.className = 'pin' + (c.wish ? ' wish' : c.fav ? ' fav' : '') + (c.closed ? ' closed' : '') + (sel ? ' sel' : '');
-    el.innerHTML = `<div class="ring"><div>${cupIcon(c.id)}</div></div><div class="tip"></div><div class="nm">${esc(c.name)}</div>`;
+    el.innerHTML = `<div class="ring"><div>${cupIcon(c.id, c)}</div></div><div class="tip"></div><div class="nm">${esc(c.name)}</div>`;
     el.addEventListener('click', e => { e.stopPropagation(); openSheet(c.id); });
     o = new kakao.maps.CustomOverlay({ position: new kakao.maps.LatLng(c.lat, c.lng), content: el, yAnchor: 1, clickable: true, zIndex: sel ? 5 : 2 });
     o.setMap(map); o._el = el; o._sig = sig;
@@ -2050,7 +2065,7 @@ async function renderList(){
     const cover = coverOf(c, st); const url = cover ? await getPhotoURL(cover) : '';
     const sk = [c.name, c.address, c.roadAddress, c.memo, ...(c.tags||[]), kindOf(c), ...visitsOf(c.id).flatMap(v => [v.menu, v.review])].join(' ').toLowerCase();
     return `<button class="item" data-id="${c.id}" data-s="${esc(sk)}" style="width:100%;text-align:left">
-      <div class="thumbpol" style="transform:rotate(${hashRot(c.id,0)}deg)"><div style="${url?`background-image:url('${url}')`:''}">${url?'':cupIcon(c.id)}</div></div>
+      <div class="thumbpol" style="transform:rotate(${hashRot(c.id,0)}deg)"><div style="${url?`background-image:url('${url}')`:''}">${url?'':cupIcon(c.id, c)}</div></div>
       <div class="info"><div class="nm">${c.wish?'<span style="color:var(--sub)">☆</span> ':c.fav?'<span style="color:var(--heartt)">♥</span> ':''}${esc(c.name)}</div>
       <div class="ad">${esc(shortAddr(c))}${d!=null?' · '+fmtDist(d):''}</div>
       <div class="mini">${st.rating?`<b>★ ${st.rating.toFixed(1)}</b>`:''}<span>${c.wish && !st.count ? '가볼래' : `방문 기록 ${st.count}개`}</span>${st.last?`<span>${fmtDate(st.last)}</span>`:''}</div></div></button>`;
@@ -2680,7 +2695,7 @@ async function shareTop(){
       const id = coverOf(c, st), x0 = 170, sz = 100;
       g.save(); g.beginPath(); g.roundRect ? g.roundRect(x0, y + 12, sz, sz, 18) : g.rect(x0, y + 12, sz, sz); g.clip();
       g.fillStyle = '#F1E6E2'; g.fillRect(x0, y + 12, sz, sz);
-      const cupImg = async () => { try { const svg = cupIcon(c.id).replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" '); const im = await new Promise((res, rej) => { const m = new Image(); m.onload = () => res(m); m.onerror = rej; m.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); }); g.drawImage(im, x0 + 14, y + 26, sz - 28, sz - 28); } catch {} };
+      const cupImg = async () => { try { const svg = cupIcon(c.id, c).replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" '); const im = await new Promise((res, rej) => { const m = new Image(); m.onload = () => res(m); m.onerror = rej; m.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); }); g.drawImage(im, x0 + 14, y + 26, sz - 28, sz - 28); } catch {} };
       let drew = false;
       if (id) { try { const u = await getPhotoURL(id); const img = await new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = u; }); const k = Math.max(sz / img.width, sz / img.height); g.drawImage(img, x0 + (sz - img.width * k) / 2, y + 12 + (sz - img.height * k) / 2, img.width * k, img.height * k); drew = true; } catch {} }
       if (!drew) await cupImg();
@@ -3387,7 +3402,7 @@ async function doPickInner(){
     const d = myPos ? distKm(myPos, c) : null, lv = c._st.last;
     $('#pickRes').innerHTML = `<div class="pickres pop">
       <div class="small" style="margin-bottom:8px">${total}곳 중에 골랐어요 · ${IC.friends} ${esc(frName(c._fr))}님 식당</div>
-      ${url ? `<div class="pols" style="height:150px;width:130px;margin:0 auto"><div class="pol" style="left:0;top:4px;transform:rotate(-3deg)"><div style="background-image:url('${url}')"></div></div></div>` : cupIcon(c.id)}
+      ${url ? `<div class="pols" style="height:150px;width:130px;margin:0 auto"><div class="pol" style="left:0;top:4px;transform:rotate(-3deg)"><div style="background-image:url('${url}')"></div></div></div>` : cupIcon(c.id, c)}
       <div class="title" style="margin-top:6px">${esc(c.name)}</div>
       <div class="subt">${esc(shortAddr(c))}${d != null ? ' · ' + fmtDist(d) : ''}${c._st.rating ? ' · ★ ' + c._st.rating.toFixed(1) : ''}</div>
       ${lv && lv.review ? `<div class="note" style="margin-top:6px;text-align:left;background:var(--bg)">${esc(lv.review)}</div>` : ''}
@@ -3407,7 +3422,7 @@ async function doPickInner(){
   const lv = st.lastVisit;
   $('#pickRes').innerHTML = `<div class="pickres pop">
     <div class="small" style="margin-bottom:8px">${total}곳 중에 골랐어요</div>
-    ${ids.length ? polaroids(ids, urls) : cupIcon(c.id)}
+    ${ids.length ? polaroids(ids, urls) : cupIcon(c.id, c)}
     <div class="title" style="margin-top:6px">${c.wish ? '<span style="color:var(--sub)">☆</span> ' : ''}${esc(c.name)}</div>
     <div class="subt">${esc(shortAddr(c))}${d != null ? ' · ' + fmtDist(d) : ''}${st.rating ? ' · ★ ' + st.rating.toFixed(1) : ''}</div>
     <div style="margin-top:8px">${(c.tags||[]).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
@@ -3832,7 +3847,7 @@ async function drawFriend(){
   const rows = rec.cafes.map(c => ({ c, st: frStats(rec, c) })).sort((a, b) => (b.st.last?.date || '').localeCompare(a.st.last?.date || '') || (b.c.createdAt || 0) - (a.c.createdAt || 0));
   const mineK = new Set(cafes.map(c => c.kakaoId).filter(Boolean));
   $('#fBody').innerHTML = seg + rows.map(({ c, st }) => `<div class="fcafe" data-fc="${esc(c.id)}">
-      <div class="item" style="width:100%"><div class="thumbpol" style="transform:rotate(${hashRot(c.id, 0)}deg)"><div data-fph="${st.cover || ''}">${st.cover ? '' : cupIcon(c.id)}</div></div>
+      <div class="item" style="width:100%"><div class="thumbpol" style="transform:rotate(${hashRot(c.id, 0)}deg)"><div data-fph="${st.cover || ''}">${st.cover ? '' : cupIcon(c.id, c)}</div></div>
       <div class="info"><div class="nm">${c.wish ? '<span style="color:var(--sub)">☆</span> ' : c.fav ? '<span style="color:var(--heartt)">♥</span> ' : ''}${esc(c.name)}${c.kakaoId && mineK.has(c.kakaoId) ? ' <span class="small" style="color:var(--acc)">· 나도 감</span>' : ''}</div>
       <div class="ad">${esc(shortAddr(c))}</div>
       <div class="mini">${st.rating ? `<b>★ ${st.rating.toFixed(1)}</b>` : ''}<span>${c.wish && !st.count ? '가볼래' : `방문 ${st.count}번`}</span>${st.last?.date ? `<span>${fmtDate(st.last.date)}</span>` : ''}</div>
@@ -3936,7 +3951,7 @@ async function drawFriendPins(focusUid, quiet){
     const marks = g.who.map(w => w.m), anyWent = marks.some(m => m !== '☆'), anyFav = marks.includes('♥');
     const el = document.createElement('div');
     el.className = 'pin friend' + (anyWent ? '' : ' wish') + (anyFav ? ' ffav' : '') + (g.c.closed ? ' closed' : '');
-    el.innerHTML = `<div class="ring"><div>${cupIcon(g.c.id)}</div></div><div class="tip"></div><div class="nm">${esc(g.c.name)}</div><div class="fwho">${g.who.map((w, i) => esc(marks[i] + ' ' + frName(w.uid))).join(', ')}</div>`;
+    el.innerHTML = `<div class="ring"><div>${cupIcon(g.c.id, g.c)}</div></div><div class="tip"></div><div class="nm">${esc(g.c.name)}</div><div class="fwho">${g.who.map((w, i) => esc(marks[i] + ' ' + frName(w.uid))).join(', ')}</div>`;
     el.addEventListener('click', e => { e.stopPropagation(); openFriendSheet(g.who[0].uid, g.c, false, g.who); });
     const o = new kakao.maps.CustomOverlay({ position: new kakao.maps.LatLng(g.c.lat, g.c.lng), content: el, yAnchor: 1, clickable: true, zIndex: 1 });
     o.setMap(map); o._el = el; FR.pins.set(key, o);
@@ -4078,7 +4093,7 @@ async function startShareView(){
   for (const c of list) {
     const el = document.createElement('div');
     el.className = 'pin' + (c.wish ? ' wish' : c.fav ? ' fav' : '') + (c.closed ? ' closed' : '');
-    el.innerHTML = `<div class="ring"><div>${cupIcon(c.id)}</div></div><div class="tip"></div><div class="nm">${esc(c.name)}</div>`;
+    el.innerHTML = `<div class="ring"><div>${cupIcon(c.id, c)}</div></div><div class="tip"></div><div class="nm">${esc(c.name)}</div>`;
     el.addEventListener('click', e => { e.stopPropagation(); shareSheet(c); });
     const o = new kakao.maps.CustomOverlay({ position: new kakao.maps.LatLng(c.lat, c.lng), content: el, yAnchor: 1, clickable: true, zIndex: 2 });
     o.setMap(map); o._el = el; overlays.set(c.id, o);
@@ -4091,7 +4106,7 @@ async function startShareView(){
     $('#sListTitle').textContent = data.title;
     const rows = [...list].sort((a,b) => (b.rating||0) - (a.rating||0) || a.name.localeCompare(b.name, 'ko'));
     $('#sListBody').innerHTML = rows.map(c => `<button class="item" data-sid="${c.id}" style="width:100%;text-align:left">
-      <div class="thumbpol"><div style="${c.thumb ? `background-image:url('${c.thumb}')` : ''}">${c.thumb ? '' : cupIcon(c.id)}</div></div>
+      <div class="thumbpol"><div style="${c.thumb ? `background-image:url('${c.thumb}')` : ''}">${c.thumb ? '' : cupIcon(c.id, c)}</div></div>
       <div class="info"><div class="nm">${c.wish ? '☆ ' : c.fav ? '<span style="color:var(--heartt)">♥</span> ' : ''}${esc(c.name)}</div><div class="ad">${esc(shortAddr(c))}</div>
       <div class="mini">${c.rating ? `<b>★ ${c.rating.toFixed(1)}</b>` : ''}${c.review ? `<span>${esc(c.review.slice(0,28))}${c.review.length > 28 ? '…' : ''}</span>` : ''}</div></div></button>`).join('');
     $('#sListBody').onclick = e => { const r = e.target.closest('[data-sid]'); if (!r) return; closePage('pSList'); shareSheet(list.find(x => x.id === r.dataset.sid), true); };
@@ -4235,7 +4250,7 @@ async function refreshAll(){
 /* =========================================================
    앱 업데이트 (홈 화면에 깔린 앱이 옛 화면을 붙잡고 있을 때)
    ========================================================= */
-const APP_VERSION = '2026.11.21-2'; // 고칠 때마다 올림
+const APP_VERSION = '2026.11.21-3'; // 고칠 때마다 올림
 // 새 버전 확인: 파일 맨 앞 2KB만 받아서 버전 표시만 읽음 (안 되면 전체를 받아 확인)
 async function latestVersion(){
   try {

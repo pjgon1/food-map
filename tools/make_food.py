@@ -34,7 +34,7 @@ def rep_block(start, end, new):
     s = s[:i] + new + s[j + len(end):]
 
 
-VERSION = '2026.11.21-9'
+VERSION = '2026.11.21-10'
 
 # ---------------------------------------------------------------
 # 1) 같은 주소(pjgon1.github.io)를 쓰는 커피로그와 이 기기 저장 칸이 안 섞이게
@@ -103,7 +103,9 @@ rep("const rank = p => p.category_group_code === 'CE7' || /카페|커피|디저�
 # 4) 식당용 내용: 태그, 항목 별점, 메뉴 종류, 뱃지, 그림
 # ---------------------------------------------------------------
 rep_block("const TAGS = [", "];",
-          "const TAGS = ['혼밥 가능','빠르게 먹기 좋음','가성비','양 많음','무한리필·뷔페','웨이팅 있음','예약 추천','데이트','특별한 날','모임·회식','룸 있음','분위기 좋음','뷰 좋음','야외 좌석','조용함','친절함','술 한잔','늦게까지','포장 가능','주차 가능'];")
+          "const TAGS = ['혼밥 가능','빠르게 먹기 좋음','가성비','양 많음','무한리필·뷔페','데이트','특별한 날','모임·회식','룸 있음','분위기 좋음','뷰 좋음','야외 좌석','조용함','친절함','술 한잔',"
+          "'브레이크타임 없음','아침식사 가능','심야 영업','배달 가능','포장 가능','테이크아웃 전문','예약 추천','웨이팅 있음','주차 가능'];\n"
+          "const TAGS_OPS = ['브레이크타임 없음','아침식사 가능','심야 영업','배달 가능','포장 가능','테이크아웃 전문','예약 추천','웨이팅 있음','주차 가능']; // 영업·이용 칸")
 rep("const SUBS = [['taste', '맛'], ['mood', '분위기'], ['seat', '자리'], ['pref', '취향']];",
     "const SUBS = [['taste', '맛'], ['value', '가성비'], ['mood', '분위기'], ['pref', '취향']];")
 MENU = r"""const MENU_GROUPS = [
@@ -310,7 +312,10 @@ rep("""<div class="tagpick" id="cTags">""",
     """<div class="tagpick" id="cKind" style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed var(--line)">${KINDS.map(k => `<button class="chip ${kindsOf(c).includes(k)?'on':''}" data-k="${k}">${k}</button>`).join('')}</div>
     <div class="small" style="margin:0 2px 6px">어떤 음식?</div>
     <div class="tagpick" id="cFeat" style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed var(--line)">${FEATS.map(f => `<button class="chip ${featsOf(c).includes(f)?'on':''}" data-f="${f}">${f}</button>`).join('')}</div>
+    <div class="small" style="margin:0 2px 6px">분위기·상황</div>
     <div class="tagpick" id="cTags">""")
+rep("""<div class="tagpick" id="cTags">${TAGS.map(t => `<button class="chip ${c.tags.includes(t)?'on':''}" data-t="${esc(t)}">${esc(t)}</button>`).join('')}</div>""",
+    """<div class="tagpick" id="cTags">${TAGS.filter(t => !TAGS_OPS.includes(t)).map(t => `<button class="chip ${c.tags.includes(t)?'on':''}" data-t="${esc(t)}">${esc(t)}</button>`).join('')}<div class="small" style="flex-basis:100%;margin:6px 2px 0;padding-top:10px;border-top:1px dashed var(--line)">영업·이용</div>${TAGS_OPS.map(t => `<button class="chip ${c.tags.includes(t)?'on':''}" data-t="${esc(t)}">${esc(t)}</button>`).join('')}</div>""")
 rep("$('#cTags').onclick = e => { const b = e.target.closest('.chip'); if (b) b.classList.toggle('on'); };",
     "$('#cTags').onclick = e => { const b = e.target.closest('.chip'); if (b) b.classList.toggle('on'); };\n  $('#cKind').onclick = e => { const b = e.target.closest('.chip'); if (!b) return; b.classList.toggle('on');\n    // 음식 성격을 직접 안 건드렸으면 바뀐 종류에 맞춰 자동값을 다시 보여줌 (술집 → 안주)\n    if (!$('#cFeat').dataset.touched && !Array.isArray(c.feats)) { const ks = [...document.querySelectorAll('#cKind .chip.on')].map(x => x.dataset.k), au = autoFeats({ ...c, kind: ks.length ? ks : undefined }); document.querySelectorAll('#cFeat .chip').forEach(x => x.classList.toggle('on', au.includes(x.dataset.f))); } };\n  $('#cFeat').onclick = e => { const b = e.target.closest('.chip'); if (b) { b.classList.toggle('on'); e.currentTarget.dataset.touched = '1'; } };")
 rep("c.tags = [...document.querySelectorAll('#cTags .chip.on')].map(b => b.dataset.t);",

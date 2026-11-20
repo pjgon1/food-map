@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="2026.11.21-9">
+<meta name="app-version" content="2026.11.21-10">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#FFF9F5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,7 +13,7 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <!-- 보안: 아래 script-src 의 sha256 두 개는 이 파일 안 인라인 스크립트 두 덩어리의 해시. 스크립트를 고치면 해시도 다시 계산해서 바꿔야 앱이 열림 -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IPTHRSGmeYrNSOO3QK4KY36tTY/VnE+Mx7/hZB8FcZs=' 'sha256-IeaggwzmXd9zqAb2rVXPIlDh5CioYMMAraErvC4NKjk=' https://dapi.kakao.com https://*.kakaocdn.net https://*.daumcdn.net https://cdn.jsdelivr.net; connect-src 'self' https://wqzndhwuylzpgauoldpv.supabase.co wss://wqzndhwuylzpgauoldpv.supabase.co https://*.kakao.com https://*.kakaocdn.net https://*.daum.net https://*.daumcdn.net https://api.open-meteo.com https://archive-api.open-meteo.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self'; manifest-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IPTHRSGmeYrNSOO3QK4KY36tTY/VnE+Mx7/hZB8FcZs=' 'sha256-+rrKzIeeSgJnZiUrHvWS4dyCE0TAZA5FY7qWMDNYrro=' https://dapi.kakao.com https://*.kakaocdn.net https://*.daumcdn.net https://cdn.jsdelivr.net; connect-src 'self' https://wqzndhwuylzpgauoldpv.supabase.co wss://wqzndhwuylzpgauoldpv.supabase.co https://*.kakao.com https://*.kakaocdn.net https://*.daum.net https://*.daumcdn.net https://api.open-meteo.com https://archive-api.open-meteo.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self'; manifest-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <title>맛집로그</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -782,7 +782,8 @@ const passTags = (c, sel) => {
   return (!ks.length || ks.some(k => kindsOf(c).includes(k))) && a.filter(t => FEATS.includes(t)).every(t => featsOf(c).includes(t))
     && a.filter(t => !KINDS.includes(t) && !FEATS.includes(t)).every(t => (c.tags || []).includes(t));
 };
-const TAGS = ['혼밥 가능','빠르게 먹기 좋음','가성비','양 많음','무한리필·뷔페','웨이팅 있음','예약 추천','데이트','특별한 날','모임·회식','룸 있음','분위기 좋음','뷰 좋음','야외 좌석','조용함','친절함','술 한잔','늦게까지','포장 가능','주차 가능'];
+const TAGS = ['혼밥 가능','빠르게 먹기 좋음','가성비','양 많음','무한리필·뷔페','데이트','특별한 날','모임·회식','룸 있음','분위기 좋음','뷰 좋음','야외 좌석','조용함','친절함','술 한잔','브레이크타임 없음','아침식사 가능','심야 영업','배달 가능','포장 가능','테이크아웃 전문','예약 추천','웨이팅 있음','주차 가능'];
+const TAGS_OPS = ['브레이크타임 없음','아침식사 가능','심야 영업','배달 가능','포장 가능','테이크아웃 전문','예약 추천','웨이팅 있음','주차 가능']; // 영업·이용 칸
 const THEMES = [
   {k:'gochujang',n:'고추장',    bg:'#FFF9F5',ink:'#3A221C',sub:'#9C7D73',acc:'#C9472D',onacc:'#fff',soft:'#FCE2D9',softt:'#A63A22',note:'#FDF0EA',heart:'#FCE7EA',heartt:'#C2405E',line:'#F4DDD3',frame:'#fff',ph:'#F6CFC1'},
   {k:'coffee',  n:'누룽지', bg:'#FFFDF9',ink:'#2A2522',sub:'#8A817A',acc:'#6F4E37',onacc:'#fff',soft:'#F3EBE3',softt:'#6F4E37',note:'#F7F2EC',heart:'#FCEFEF',heartt:'#B4475A',line:'#EDE5DC',frame:'#fff',ph:'#E7D3BE'},
@@ -1879,7 +1880,8 @@ function openCafeEditor(id, seed){
     <div class="tagpick" id="cKind" style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed var(--line)">${KINDS.map(k => `<button class="chip ${kindsOf(c).includes(k)?'on':''}" data-k="${k}">${k}</button>`).join('')}</div>
     <div class="small" style="margin:0 2px 6px">어떤 음식?</div>
     <div class="tagpick" id="cFeat" style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed var(--line)">${FEATS.map(f => `<button class="chip ${featsOf(c).includes(f)?'on':''}" data-f="${f}">${f}</button>`).join('')}</div>
-    <div class="tagpick" id="cTags">${TAGS.map(t => `<button class="chip ${c.tags.includes(t)?'on':''}" data-t="${esc(t)}">${esc(t)}</button>`).join('')}</div>
+    <div class="small" style="margin:0 2px 6px">분위기·상황</div>
+    <div class="tagpick" id="cTags">${TAGS.filter(t => !TAGS_OPS.includes(t)).map(t => `<button class="chip ${c.tags.includes(t)?'on':''}" data-t="${esc(t)}">${esc(t)}</button>`).join('')}<div class="small" style="flex-basis:100%;margin:6px 2px 0;padding-top:10px;border-top:1px dashed var(--line)">영업·이용</div>${TAGS_OPS.map(t => `<button class="chip ${c.tags.includes(t)?'on':''}" data-t="${esc(t)}">${esc(t)}</button>`).join('')}</div>
     <label class="f">메모 (와이파이 비번, 주차 팁 같은 거)</label>
     <textarea class="inp" id="cMemo" placeholder="자유롭게 적어두세요" style="min-height:80px">${esc(c.memo)}</textarea>
     ${id ? `<div class="sec"><button class="btn danger" id="cDel" style="width:100%">이 식당 기록 전체 삭제</button></div>` : ''}`;
@@ -4495,7 +4497,7 @@ async function refreshAll(){
 /* =========================================================
    앱 업데이트 (홈 화면에 깔린 앱이 옛 화면을 붙잡고 있을 때)
    ========================================================= */
-const APP_VERSION = '2026.11.21-9'; // 고칠 때마다 올림
+const APP_VERSION = '2026.11.21-10'; // 고칠 때마다 올림
 // 새 버전 확인: 파일 맨 앞 2KB만 받아서 버전 표시만 읽음 (안 되면 전체를 받아 확인)
 async function latestVersion(){
   try {

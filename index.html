@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="2026.11.21-11">
+<meta name="app-version" content="2026.11.21-12">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#FFF9F5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,7 +13,7 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <!-- 보안: 아래 script-src 의 sha256 두 개는 이 파일 안 인라인 스크립트 두 덩어리의 해시. 스크립트를 고치면 해시도 다시 계산해서 바꿔야 앱이 열림 -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IPTHRSGmeYrNSOO3QK4KY36tTY/VnE+Mx7/hZB8FcZs=' 'sha256-+XO9ZMLabZ4XXVCmBlSoSIXfexLU9MpKAcXm7y/SeOs=' https://dapi.kakao.com https://*.kakaocdn.net https://*.daumcdn.net https://cdn.jsdelivr.net; connect-src 'self' https://wqzndhwuylzpgauoldpv.supabase.co wss://wqzndhwuylzpgauoldpv.supabase.co https://*.kakao.com https://*.kakaocdn.net https://*.daum.net https://*.daumcdn.net https://api.open-meteo.com https://archive-api.open-meteo.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self'; manifest-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IPTHRSGmeYrNSOO3QK4KY36tTY/VnE+Mx7/hZB8FcZs=' 'sha256-T3MeFrm5T009M58Hh89lsPqEiCD/ewNVMU/z8VS296o=' https://dapi.kakao.com https://*.kakaocdn.net https://*.daumcdn.net https://cdn.jsdelivr.net; connect-src 'self' https://wqzndhwuylzpgauoldpv.supabase.co wss://wqzndhwuylzpgauoldpv.supabase.co https://*.kakao.com https://*.kakaocdn.net https://*.daum.net https://*.daumcdn.net https://api.open-meteo.com https://archive-api.open-meteo.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self'; manifest-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <title>맛집로그</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -544,6 +544,7 @@ textarea.inp{min-height:110px;resize:vertical;line-height:1.6}
       </div>
       <div class="seg" id="sortSeg"></div>
       <div class="seg" id="listChips" style="padding-top:0"></div>
+      <div class="seg" id="listChips2" style="padding-top:0"></div>
     </div>
     <div id="list"></div>
   </div>
@@ -2261,10 +2262,12 @@ try { sortBy = LS.getItem('sortBy') || 'recent'; } catch {}
 function renderSort(){
   $('#sortSeg').innerHTML = SORTS.map(([k,n]) => `<button class="chip ${k===sortBy?'on':''}" data-k="${k}">${n}</button>`).join('');
   const used = new Set(cafes.flatMap(c => [...(c.tags||[]), ...kindsOf(c), ...featsOf(c)]));
-  const tags = ['전체','다녀왔어 ♪','또 갈래 ♥','가볼래 ☆', ...KINDS.filter(t => used.has(t)), ...FEATS.filter(t => used.has(t)), ...TAGS.filter(t => used.has(t))];
+  const tags = ['전체','다녀왔어 ♪','또 갈래 ♥','가볼래 ☆', ...KINDS.filter(t => used.has(t))], tags2 = [...FEATS.filter(t => used.has(t)), ...TAGS.filter(t => used.has(t))]; // 첫 줄: 상태·종류, 둘째 줄: 음식·분위기·영업
   listSel.tags.forEach(t => { if (!used.has(t)) listSel.tags.delete(t); });
   const on = t => t === '전체' ? !listSel.st.size && !listSel.tags.size : listSel.st.has(t) || listSel.tags.has(t);
   $('#listChips').innerHTML = tags.map(t => `<button class="chip ${on(t)?'on':''}" data-t="${esc(t)}" style="font-size:12px;padding:5px 10px">${esc(t)}</button>`).join('');
+  $('#listChips2').innerHTML = tags2.map(t => `<button class="chip ${on(t)?'on':''}" data-t="${esc(t)}" style="font-size:12px;padding:5px 10px">${esc(t)}</button>`).join('');
+  $('#listChips2').classList.toggle('hidden', !tags2.length);
 }
 $('#sortSeg').onclick = async e => {
   const b = e.target.closest('.chip'); if (!b) return;
@@ -2279,6 +2282,7 @@ $('#listChips').onclick = e => {
   else listSel.tags.has(t) ? listSel.tags.delete(t) : listSel.tags.add(t);
   renderList();
 };
+$('#listChips2').onclick = e => $('#listChips').onclick(e);
 const passList = c => (!listSel.st.size || [...listSel.st].some(s => passFilter(c, s))) && passTags(c, listSel.tags);
 $('#lq').oninput = () => applyListQuery();
 function applyListQuery(){
@@ -4501,7 +4505,7 @@ async function refreshAll(){
 /* =========================================================
    앱 업데이트 (홈 화면에 깔린 앱이 옛 화면을 붙잡고 있을 때)
    ========================================================= */
-const APP_VERSION = '2026.11.21-11'; // 고칠 때마다 올림
+const APP_VERSION = '2026.11.21-12'; // 고칠 때마다 올림
 // 새 버전 확인: 파일 맨 앞 2KB만 받아서 버전 표시만 읽음 (안 되면 전체를 받아 확인)
 async function latestVersion(){
   try {

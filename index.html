@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="2026.11.21-7">
+<meta name="app-version" content="2026.11.21-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#FFF9F5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,7 +13,7 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <!-- 보안: 아래 script-src 의 sha256 두 개는 이 파일 안 인라인 스크립트 두 덩어리의 해시. 스크립트를 고치면 해시도 다시 계산해서 바꿔야 앱이 열림 -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IPTHRSGmeYrNSOO3QK4KY36tTY/VnE+Mx7/hZB8FcZs=' 'sha256-xZkC5N8PU/Ns22XQiTc/WOeGALRzVp/gFNqR5D277z8=' https://dapi.kakao.com https://*.kakaocdn.net https://*.daumcdn.net https://cdn.jsdelivr.net; connect-src 'self' https://wqzndhwuylzpgauoldpv.supabase.co wss://wqzndhwuylzpgauoldpv.supabase.co https://*.kakao.com https://*.kakaocdn.net https://*.daum.net https://*.daumcdn.net https://api.open-meteo.com https://archive-api.open-meteo.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self'; manifest-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IPTHRSGmeYrNSOO3QK4KY36tTY/VnE+Mx7/hZB8FcZs=' 'sha256-GtA6rxWAcy6QN2yCsi7oioyRiw32aj1mDxdWmXssDqA=' https://dapi.kakao.com https://*.kakaocdn.net https://*.daumcdn.net https://cdn.jsdelivr.net; connect-src 'self' https://wqzndhwuylzpgauoldpv.supabase.co wss://wqzndhwuylzpgauoldpv.supabase.co https://*.kakao.com https://*.kakaocdn.net https://*.daum.net https://*.daumcdn.net https://api.open-meteo.com https://archive-api.open-meteo.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self'; manifest-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <title>맛집로그</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -747,7 +747,7 @@ const autoKind = cat => {
 const kindOf = c => (c && (c.kind || autoKind(c.category))) || '';
 // 음식 성격: 종류와 따로 겹쳐서 붙음 (막국수 = 한식 + 면, 라볶이 = 분식 + 면 + 매운거)
 // 식당 정보에서 고른 값 → 없으면 이름·카카오 분류로 자동
-const FEATS = ['고기', '해산물', '면', '밥', '국물', '매운거', '튀김', '안주', '디저트'];
+const FEATS = ['고기', '해산물', '채소', '면', '밥', '빵', '국물', '구이', '찜', '튀김', '날것', '매운거', '안주', '디저트'];
 const FEAT_KEYS = {
   '고기': /고기|육류|삼겹|목살|항정|갈비|불고기|한우|등심|차돌|곱창|막창|대창|족발|보쌈|제육|스테이크|바베큐|숯불|정육|오리|양꼬치|닭갈비|육회|바비큐|바베큐|립|동파육|수육|닭한마리|찜닭|야키토리/,
   '해산물': /해물|해산물|횟집|회센터|회타운|회식당|(^|\s)회($|\s)|활어|물회|사시미|초밥|스시|오마카세|수산|생선|조개|대게|킹크랩|꽃게|게장|크랩|랍스터|새우|오징어|낙지|쭈꾸미|주꾸미|문어|아귀|아구찜|장어|고등어|갈치|전복|굴국|굴보쌈|매운탕|포케|알탕|꼬막|감바스|봉골레|똠얌|똠양|뿌팟퐁|피시앤칩스|피쉬앤칩스/,
@@ -755,15 +755,21 @@ const FEAT_KEYS = {
   '밥': /밥|백반|한정식|정식|도시락|돈부리|규동|카레|(^|[^이])커리|오므라이스|리조또|리소토|포케|기사식당|가정식|나시고렝|나시고랭|오차즈케|(^|\s)죽($|\s)|죽집|본죽|전복죽|가츠동|규동/,
   '국물': /국밥|해장국|순댓국|순대국|미역국|찌개|전골|탕(?!수|후)|육개장|칼국수|잔치국수|쌀국수|라멘|우동|짬뽕|샤브|훠궈|수제비|청국장|닭한마리|나베|똠얌|똠양|락사|바쿠테|수프|스프/,
   '매운거': /매운|마라|떡볶이|라볶이|짬뽕|불닭|닭발|쭈꾸미|주꾸미|낙지|아귀|아구찜|육개장|김치찌개|부대|닭볶음탕|닭도리탕|닭갈비|제육|오징어볶음|찜닭|쫄면|순두부|감자탕|훠궈|알탕|해물찜|똠얌|똠양|깐풍|떡꼬치/,
+  '채소': /샐러드|비건|채식|나물|산채|쌈밥|월남쌈|보리밥|비빔밥|포케|사찰음식|채소|야채/,
+  '빵': /빵|베이커리|제과|베이글|샌드위치|토스트|크루아상|크로와상|바게트|반미|파니니|브런치|서브웨이|스콘/,
+  '구이': /구이|삼겹|목살|항정|숯불|바비큐|바베큐|직화|화로|철판|고기집|고깃집|갈비(?!탕|찜)|곱창|막창|대창|양꼬치|닭꼬치|야키토리|스테이크|그릴/,
+  '찜': /찜|조림/,
+  '날것': /횟집|회센터|회타운|회식당|(^|\s)회($|\s)|물회|사시미|초밥|스시|오마카세|육회|생굴|게장|포케|사케동|연어|활어|타타키|카르파치오|세비체/,
   '튀김': /튀김|치킨|통닭|후라이드|닭강정|돈까스|돈가스|카츠|텐동|가라아게|탕수육|꿔바로우|감자튀김|유린기|깐풍기|피시앤칩스|피쉬앤칩스|가츠동/,
   '안주': /술집|주점|포차|포장마차|이자카야|호프|맥주|와인|하이볼|전집|파전|족발|보쌈|곱창|막창|대창|닭발|꼬치|야키토리|양꼬치|치킨|통닭|노가리|골뱅이|육회|횟집|회센터|회타운|조개구이|감바스|모츠나베|바비큐|바베큐/,
-  '디저트': /디저트|케이크|빙수|아이스크림|젤라또|와플|크로플|도넛|도너츠|푸딩|마카롱|크레페|크레프|베이글|아사이|베이커리|제과|빵|호떡|팬케이크|타르트|쿠키/,
+  '디저트': /디저트|케이크|빙수|아이스크림|젤라또|와플|크로플|도넛|도너츠|푸딩|마카롱|크레페|크레프|아사이|제과|붕어빵|호떡|팬케이크|타르트|쿠키|약과|인절미/,
 };
 const autoFeats = c => {
   if (!c) return [];
   const hit = s => FEATS.filter(f => FEAT_KEYS[f].test(s));
-  let fs = hit(c.name || ''); // 이름에서 먼저, 모르면 카카오 분류에서
-  if (!fs.length) fs = hit(String(c.category || '').split('>').map(x => x.trim()).filter(x => x && x !== '음식점').join(' '));
+  const fn = hit(c.name || ''), fc = hit(String(c.category || '').split('>').map(x => x.trim()).filter(x => x && x !== '음식점').join(' '));
+  // 이름에서 찾은 게 있으면 그걸 쓰고 카카오 분류에서는 재료(고기·해산물·채소)만 보탬. 이름으로 모르면 분류를 다 씀
+  const fs = fn.length ? [...fn, ...fc.filter(f => ['고기', '해산물', '채소'].includes(f))] : fc;
   if (kindOf(c) === '술집') fs.push('안주');
   return FEATS.filter(f => fs.includes(f));
 };
@@ -774,7 +780,7 @@ const passTags = (c, sel) => {
   return (!ks.length || ks.includes(kindOf(c))) && a.filter(t => FEATS.includes(t)).every(t => featsOf(c).includes(t))
     && a.filter(t => !KINDS.includes(t) && !FEATS.includes(t)).every(t => (c.tags || []).includes(t));
 };
-const TAGS = ['혼밥 가능','가성비','양 많음','웨이팅 있음','예약 추천','데이트','모임·회식','분위기 좋음','조용함','술 한잔','늦게까지','포장 가능','주차 가능','아이랑'];
+const TAGS = ['혼밥 가능','빠르게 먹기 좋음','가성비','양 많음','무한리필·뷔페','웨이팅 있음','예약 추천','데이트','특별한 날','모임·회식','룸 있음','분위기 좋음','뷰 좋음','야외 좌석','조용함','친절함','술 한잔','늦게까지','포장 가능','주차 가능'];
 const THEMES = [
   {k:'gochujang',n:'고추장',    bg:'#FFF9F5',ink:'#3A221C',sub:'#9C7D73',acc:'#C9472D',onacc:'#fff',soft:'#FCE2D9',softt:'#A63A22',note:'#FDF0EA',heart:'#FCE7EA',heartt:'#C2405E',line:'#F4DDD3',frame:'#fff',ph:'#F6CFC1'},
   {k:'coffee',  n:'누룽지', bg:'#FFFDF9',ink:'#2A2522',sub:'#8A817A',acc:'#6F4E37',onacc:'#fff',soft:'#F3EBE3',softt:'#6F4E37',note:'#F7F2EC',heart:'#FCEFEF',heartt:'#B4475A',line:'#EDE5DC',frame:'#fff',ph:'#E7D3BE'},
@@ -3077,27 +3083,35 @@ function menuEntries(){
 /* 메뉴 종류 자동 묶기: 이름에 들어간 낱말로 판단 (위에서부터 먼저 맞는 종류) */
 const MENU_GROUPS = [
   ['국밥·탕', /국밥|해장국|설렁탕|곰탕|갈비탕|감자탕|순대국|순댓국|내장탕|도가니탕|삼계탕|추어탕|매운탕|육개장|소머리|선지|뼈해장|수육국밥|탕$/],
+  ['죽·수프', /죽$|수프|스프|차우더|포타주/],
   ['찌개·전골', /찌개|전골|부대|짜글이|순두부|청국장|샤브/],
   ['찜·조림', /찜$|찜닭|아구찜|아귀찜|갈비찜|해물찜|조림|코다리/],
-  ['아시안', /쌀국수|팟타이|분짜|반미|나시고랭|미고랭|똠얌|똠양|팟카파오|카오팟|월남쌈|탄두리|커리|카레|^난$/],
+  ['카레', /카레|커리|^난$|탄두리/],
+  ['아시안', /쌀국수|팟타이|분짜|반미|나시고랭|나시고렝|미고랭|미고렝|똠얌|똠양|팟카파오|카오팟|월남쌈|락사|바쿠테/],
+  ['만두·딤섬', /만두|딤섬|샤오롱|교자|바오|쇼마이|하가우/],
   ['면·국수', /칼국수|국수|냉면|막국수|밀면|비빔면|쫄면|수제비|우동|소바|라멘|라면|파스타면/],
-  ['중식', /짜장|짬뽕|탕수육|마라|훠궈|양장피|깐풍|유린기|딤섬|샤오롱|만두|볶음밥|고추잡채|꿔바로우|멘보샤|팔보채|양꼬치/],
+  ['중식', /짜장|짬뽕|탕수육|마라|훠궈|양장피|깐풍|유린기|볶음밥|고추잡채|꿔바로우|멘보샤|팔보채|양꼬치|동파육/],
   ['족발·보쌈', /족발|보쌈|수육|편육/],
   ['초밥·회', /초밥|스시|사시미|오마카세|^회$|모둠회|물회|회덮밥|숙성회|활어|연어|참치/],
   ['해산물', /해물|조개|대게|킹크랩|게장|낙지|쭈꾸미|주꾸미|오징어|문어|새우|전복|생선|갈치|고등어|꽃게|홍합|장어|굴$/],
-  ['고기구이', /삼겹|오겹|목살|항정|가브리|갈매기|돼지갈비|소갈비|^갈비$|양념갈비|생갈비|등심|안심|차돌|우삼겹|살치|채끝|토시|갈비살|한우|곱창|막창|대창|숯불|불고기|닭갈비|오리|구이$/],
+  ['곱창·막창', /곱창|막창|대창|소창|양곱창|곱도리/],
+  ['고기구이', /삼겹|오겹|목살|항정|가브리|갈매기|돼지갈비|소갈비|^갈비$|양념갈비|생갈비|등심|안심|차돌|우삼겹|살치|채끝|토시|갈비살|한우|숯불|불고기|닭갈비|오리|바비큐|바베큐|폭립|등갈비|양갈비|양고기|야키니쿠|떡갈비|구이$/],
   ['치킨', /치킨|닭강정|후라이드|프라이드|순살|닭다리|윙/],
-  ['돈까스·튀김', /돈까스|돈가스|카츠|커틀릿|가라아게|튀김|텐동|덴뿌라/],
-  ['일식', /돈부리|규동|사케동|가츠동|카츠동|오야코동|에비동|부타동|우나동|규카츠|오코노미|타코야키|야키토리|스키야키|나베/],
-  ['분식', /떡볶이|김밥|순대|어묵|오뎅|라볶이|쫄볶|주먹밥|컵밥|토스트/],
+  ['덮밥', /덮밥|돈부리|규동|사케동|가츠동|카츠동|오야코동|에비동|부타동|우나동|텐동|우나기|히츠마부시/],
+  ['돈까스·튀김', /돈까스|돈가스|카츠|커틀릿|가라아게|튀김|덴뿌라/],
+  ['일식', /규카츠|오코노미|타코야키|야키토리|스키야키|나베|오차즈케|야키소바/],
+  ['분식', /떡볶이|김밥|순대|어묵|오뎅|라볶이|쫄볶|주먹밥|컵밥|토스트|떡꼬치|소떡|호떡|붕어빵|계란빵/],
   ['피자', /피자/],
-  ['버거·샌드위치', /버거|샌드위치|샌드$|베이글|핫도그|타코|부리또|브리또/],
-  ['파스타·양식', /파스타|스파게티|알리오|까르보|봉골레|라자냐|뇨끼|리조또|스테이크|함박|그라탕|필라프/],
-  ['샐러드·브런치', /샐러드|포케|브런치|오믈렛|팬케이크|프렌치\s*토스트|와플/],
-  ['밥·백반', /비빔밥|백반|정식|한정식|쌈밥|덮밥|오므라이스|제육|불백|도시락|솥밥|돌솥|정찬|밥$/],
+  ['빵·베이커리', /빵$|식빵|크루아상|크로와상|베이글|바게트|스콘|휘낭시에|마들렌|타르트|브레드|깜빠뉴|치아바타|소보로|베이커리/],
+  ['버거·샌드위치', /버거|샌드위치|샌드$|핫도그|타코|부리또|브리또/],
+  ['파스타·양식', /파스타|스파게티|알리오|까르보|봉골레|라자냐|뇨끼|뇨키|리조또|스테이크|함박|그라탕|필라프|감바스/],
+  ['샐러드·브런치', /샐러드|포케|브런치|오믈렛|팬케이크|프렌치\s*토스트|와플|크로플|아사이/],
+  ['밥·백반', /비빔밥|백반|정식|한정식|쌈밥|오므라이스|제육|불백|도시락|솥밥|돌솥|정찬|밥$/],
   ['전·부침', /전$|파전|부침|빈대떡|육전|동그랑땡/],
   ['술', /소주|맥주|생맥|하이볼|와인|막걸리|사케|칵테일|위스키|고량주|전통주/],
-  ['디저트·음료', /케이크|빙수|아이스크림|젤라또|커피|라떼|아메리카노|에이드|주스|콜라|사이다|음료|마카롱|쿠키|빵|차$/],
+  ['떡·전통간식', /인절미|약과|한과|유과|송편|백설기|시루떡|꿀떡|찹쌀떡|가래떡|쑥떡|경단|양갱|식혜|수정과|떡케이크|떡$/],
+  ['아이스크림·빙수', /아이스크림|빙수|젤라또|소프트콘|셔벗|소르베|파르페|아포가토/],
+  ['디저트·음료', /케이크|커피|라떼|아메리카노|에이드|주스|콜라|사이다|음료|마카롱|쿠키|도넛|푸딩|크레페|차$/],
 ];
 // 내가 직접 옮긴 메뉴, 내가 만든 종류 (서버 user_prefs.menu_groups 에 저장)
 let MENU_USER = { map: {}, custom: [] };
@@ -4477,7 +4491,7 @@ async function refreshAll(){
 /* =========================================================
    앱 업데이트 (홈 화면에 깔린 앱이 옛 화면을 붙잡고 있을 때)
    ========================================================= */
-const APP_VERSION = '2026.11.21-7'; // 고칠 때마다 올림
+const APP_VERSION = '2026.11.21-8'; // 고칠 때마다 올림
 // 새 버전 확인: 파일 맨 앞 2KB만 받아서 버전 표시만 읽음 (안 되면 전체를 받아 확인)
 async function latestVersion(){
   try {

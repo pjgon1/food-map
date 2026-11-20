@@ -34,7 +34,7 @@ def rep_block(start, end, new):
     s = s[:i] + new + s[j + len(end):]
 
 
-VERSION = '2026.11.21-10'
+VERSION = '2026.11.21-11'
 
 # ---------------------------------------------------------------
 # 1) 같은 주소(pjgon1.github.io)를 쓰는 커피로그와 이 기기 저장 칸이 안 섞이게
@@ -299,7 +299,13 @@ rep("[...listSel.tags].every(t => (c.tags || []).includes(t))", "passTags(c, lis
 rep("return (c.tags||[]).includes(f);", "return KINDS.includes(f) ? kindsOf(c).includes(f) : FEATS.includes(f) ? featsOf(c).includes(f) : (c.tags||[]).includes(f);")
 rep("const used = new Set(cafes.flatMap(c => c.tags||[]));", "const used = new Set(cafes.flatMap(c => [...(c.tags||[]), ...kindsOf(c), ...featsOf(c)]));", 2)
 rep("const list = ['전체','다녀왔어 ♪','또 갈래 ♥','가볼래 ☆', ...TAGS.filter(t => used.has(t))];",
-    "const list = ['전체','다녀왔어 ♪','또 갈래 ♥','가볼래 ☆', ...KINDS.filter(t => used.has(t)), ...FEATS.filter(t => used.has(t)), ...TAGS.filter(t => used.has(t))];")
+    "const list = ['전체','다녀왔어 ♪','또 갈래 ♥','가볼래 ☆', ...KINDS.filter(t => used.has(t))], list2 = [...FEATS.filter(t => used.has(t)), ...TAGS.filter(t => used.has(t))]; // 첫 줄: 상태·종류, 둘째 줄: 음식·분위기·영업")
+# 지도 위 칩 두 줄
+rep('<div class="chips" id="mapChips"></div>', '<div class="chips" id="mapChips"></div>\n    <div class="chips" id="mapChips2" style="padding-top:0"></div>')
+rep('body.sharemode #mapChips{', 'body.sharemode #mapChips,body.sharemode #mapChips2{')
+rep("  $('#mapChips').innerHTML = list.map(t => `<button class=\"chip ${on(t) ? 'on' : ''}\" data-t=\"${esc(t)}\">${esc(t)}</button>`).join('');",
+    "  $('#mapChips').innerHTML = list.map(t => `<button class=\"chip ${on(t) ? 'on' : ''}\" data-t=\"${esc(t)}\">${esc(t)}</button>`).join('');\n  $('#mapChips2').innerHTML = list2.map(t => `<button class=\"chip ${on(t) ? 'on' : ''}\" data-t=\"${esc(t)}\">${esc(t)}</button>`).join('');\n  $('#mapChips2').classList.toggle('hidden', !list2.length);")
+rep("$('#btnFit').onclick = fitStep;", "$('#mapChips2').onclick = e => $('#mapChips').onclick(e);\n$('#btnFit').onclick = fitStep;")
 rep("const tags = ['전체','다녀왔어 ♪','또 갈래 ♥','가볼래 ☆', ...TAGS.filter(t => used.has(t))];",
     "const tags = ['전체','다녀왔어 ♪','또 갈래 ♥','가볼래 ☆', ...KINDS.filter(t => used.has(t)), ...FEATS.filter(t => used.has(t)), ...TAGS.filter(t => used.has(t))];")
 rep("...(c.tags||[]), ...visitsOf(c.id)", "...(c.tags||[]), ...kindsOf(c), ...featsOf(c), ...visitsOf(c.id)")

@@ -34,7 +34,7 @@ def rep_block(start, end, new):
     s = s[:i] + new + s[j + len(end):]
 
 
-VERSION = '2026.11.21-2'
+VERSION = '2026.11.21-3'
 
 # ---------------------------------------------------------------
 # 1) 같은 주소(pjgon1.github.io)를 쓰는 커피로그와 이 기기 저장 칸이 안 섞이게
@@ -156,6 +156,14 @@ k = s.find('];\n})();', j)
 if min(i, j, k) < 0:
     sys.exit('컵 그림 덩어리를 못 찾았어요')
 s = s[:j] + '  return [\n' + arts.rstrip(',') + s[k:]
+# 핀 그림: 종류별로 몇 개씩 정해두고 그중에서 (날마다 바뀜). 기타·종류 없음은 전체에서
+KIND_ARTS = "const KIND_ARTS = { '한식': [0, 2, 13], '양식': [12, 11, 27, 28, 14], '일식': [3, 1, 15, 30], '중식': [8, 18, 19, 20], '아시안': [21, 22, 23, 17], '분식': [9, 10, 29], '패스트푸드': [4, 5, 6, 16], '술집': [24, 25, 26, 7] };"
+rep("})();\nconst coverOf = ", "})();\n" + KIND_ARTS + "\nconst coverOf = ")
+rep("function cupIcon(id){", "function cupIcon(id, c){")
+rep("  return `<svg class=\"cup\" viewBox=\"0 0 32 32\" aria-hidden=\"true\">${CUP_ARTS[(h >>> 0) % CUP_ARTS.length]}</svg>`;",
+    "  const pool = KIND_ARTS[kindOf(c || cafes.find(x => x.id === id))];\n  return `<svg class=\"cup\" viewBox=\"0 0 32 32\" aria-hidden=\"true\">${pool ? CUP_ARTS[pool[(h >>> 0) % pool.length]] : CUP_ARTS[(h >>> 0) % CUP_ARTS.length]}</svg>`;")
+rep("cupIcon(c.id)", "cupIcon(c.id, c)", 0)
+rep("cupIcon(g.c.id)", "cupIcon(g.c.id, g.c)")
 rep_block("  cup: '<svg class=\"ic2\" viewBox=\"0 0 24 24\" aria-hidden=\"true\">", "</svg>',\n",
           "  cup: '<svg class=\"ic2\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M9 5.6c-.6-.8.6-1.4 0-2.3M12.2 5c-.6-.8.6-1.4 0-2.3M15.4 5.6c-.6-.8.6-1.4 0-2.3\" fill=\"none\" stroke=\"#C9B8AC\" stroke-width=\"1.1\" stroke-linecap=\"round\"/><path d=\"M5 11c0-2.9 3.2-4.5 7.2-4.5s7.2 1.6 7.2 4.5z\" fill=\"#fff\" stroke=\"#5B4636\" stroke-width=\"1.1\" stroke-linejoin=\"round\"/><path d=\"M3.6 11h17.2a8.6 8.6 0 0 1-17.2 0z\" fill=\"#FFE3EA\" stroke=\"#5B4636\" stroke-width=\"1.3\" stroke-linejoin=\"round\"/><circle cx=\"9.4\" cy=\"14.6\" r=\".6\" fill=\"#5B4636\"/><circle cx=\"15\" cy=\"14.6\" r=\".6\" fill=\"#5B4636\"/><path d=\"M11.6 15.9q.6.5 1.2 0\" fill=\"none\" stroke=\"#5B4636\" stroke-width=\".8\" stroke-linecap=\"round\"/><circle cx=\"8\" cy=\"15.8\" r=\".8\" fill=\"#FFB3C1\"/><circle cx=\"16.4\" cy=\"15.8\" r=\".8\" fill=\"#FFB3C1\"/></svg>',\n")
 

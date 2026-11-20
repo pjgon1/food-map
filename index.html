@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="2026.11.21-8">
+<meta name="app-version" content="2026.11.21-9">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#FFF9F5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,7 +13,7 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <!-- 보안: 아래 script-src 의 sha256 두 개는 이 파일 안 인라인 스크립트 두 덩어리의 해시. 스크립트를 고치면 해시도 다시 계산해서 바꿔야 앱이 열림 -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IPTHRSGmeYrNSOO3QK4KY36tTY/VnE+Mx7/hZB8FcZs=' 'sha256-GtA6rxWAcy6QN2yCsi7oioyRiw32aj1mDxdWmXssDqA=' https://dapi.kakao.com https://*.kakaocdn.net https://*.daumcdn.net https://cdn.jsdelivr.net; connect-src 'self' https://wqzndhwuylzpgauoldpv.supabase.co wss://wqzndhwuylzpgauoldpv.supabase.co https://*.kakao.com https://*.kakaocdn.net https://*.daum.net https://*.daumcdn.net https://api.open-meteo.com https://archive-api.open-meteo.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self'; manifest-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IPTHRSGmeYrNSOO3QK4KY36tTY/VnE+Mx7/hZB8FcZs=' 'sha256-IeaggwzmXd9zqAb2rVXPIlDh5CioYMMAraErvC4NKjk=' https://dapi.kakao.com https://*.kakaocdn.net https://*.daumcdn.net https://cdn.jsdelivr.net; connect-src 'self' https://wqzndhwuylzpgauoldpv.supabase.co wss://wqzndhwuylzpgauoldpv.supabase.co https://*.kakao.com https://*.kakaocdn.net https://*.daum.net https://*.daumcdn.net https://api.open-meteo.com https://archive-api.open-meteo.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self'; manifest-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <title>맛집로그</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -744,7 +744,9 @@ const autoKind = cat => {
   if (/한식|국밥|해장국|고기|해물|생선|찌개|냉면|삼계탕|족발|보쌈|백반|칼국수|국수/.test(s)) return '한식';
   return '기타';
 };
-const kindOf = c => (c && (c.kind || autoKind(c.category))) || '';
+// 여러 개 고를 수 있음 (예전 기록은 글자 하나로 저장돼 있음)
+const kindsOf = c => { if (!c) return []; const k = c.kind; if (Array.isArray(k)) return k; if (k) return [k]; const a = autoKind(c.category); return a ? [a] : []; };
+const kindOf = c => kindsOf(c)[0] || '';
 // 음식 성격: 종류와 따로 겹쳐서 붙음 (막국수 = 한식 + 면, 라볶이 = 분식 + 면 + 매운거)
 // 식당 정보에서 고른 값 → 없으면 이름·카카오 분류로 자동
 const FEATS = ['고기', '해산물', '채소', '면', '밥', '빵', '국물', '구이', '찜', '튀김', '날것', '매운거', '안주', '디저트'];
@@ -770,14 +772,14 @@ const autoFeats = c => {
   const fn = hit(c.name || ''), fc = hit(String(c.category || '').split('>').map(x => x.trim()).filter(x => x && x !== '음식점').join(' '));
   // 이름에서 찾은 게 있으면 그걸 쓰고 카카오 분류에서는 재료(고기·해산물·채소)만 보탬. 이름으로 모르면 분류를 다 씀
   const fs = fn.length ? [...fn, ...fc.filter(f => ['고기', '해산물', '채소'].includes(f))] : fc;
-  if (kindOf(c) === '술집') fs.push('안주');
+  if (kindsOf(c).includes('술집')) fs.push('안주');
   return FEATS.filter(f => fs.includes(f));
 };
 const featsOf = c => (c && (Array.isArray(c.feats) ? c.feats : autoFeats(c))) || [];
 // 칩 거르기: 종류는 고른 것 중 하나만 맞으면, 음식 성격·태그는 고른 게 다 맞아야
 const passTags = (c, sel) => {
   const a = [...sel], ks = a.filter(t => KINDS.includes(t));
-  return (!ks.length || ks.includes(kindOf(c))) && a.filter(t => FEATS.includes(t)).every(t => featsOf(c).includes(t))
+  return (!ks.length || ks.some(k => kindsOf(c).includes(k))) && a.filter(t => FEATS.includes(t)).every(t => featsOf(c).includes(t))
     && a.filter(t => !KINDS.includes(t) && !FEATS.includes(t)).every(t => (c.tags || []).includes(t));
 };
 const TAGS = ['혼밥 가능','빠르게 먹기 좋음','가성비','양 많음','무한리필·뷔페','웨이팅 있음','예약 추천','데이트','특별한 날','모임·회식','룸 있음','분위기 좋음','뷰 좋음','야외 좌석','조용함','친절함','술 한잔','늦게까지','포장 가능','주차 가능'];
@@ -1091,8 +1093,8 @@ function cupIcon(id, c){
   let h = (cupDay() * 2654435761) >>> 0;
   for (const ch of String(id)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0;
   h ^= h >>> 15; h = Math.imul(h, 2246822519) >>> 0; h ^= h >>> 13;
-  const cc = c || cafes.find(x => x.id === id), pool = artPool(cc) || KIND_ARTS[kindOf(cc)];
-  const art = pool ? CUP_ARTS[pool[(h >>> 0) % pool.length]] : CUP_ARTS[(h >>> 0) % CUP_ARTS.length];
+  const cc = c || cafes.find(x => x.id === id), pool = artPool(cc) || [...new Set(kindsOf(cc).flatMap(k => KIND_ARTS[k] || []))];
+  const art = pool.length ? CUP_ARTS[pool[(h >>> 0) % pool.length]] : CUP_ARTS[(h >>> 0) % CUP_ARTS.length];
   return `<svg class="cup" viewBox="0 0 32 32" aria-hidden="true">${(h >>> 9) & 1 ? `<g transform="matrix(-1 0 0 1 32 0)">${art}</g>` : art}</svg>`;
 }
 function hashRot(id, i){ let h = 0; for (const c of (id+i)) h = (h*31 + c.charCodeAt(0)) | 0; return ((Math.abs(h) % 9) - 4) * 0.9; }
@@ -1326,7 +1328,7 @@ function passFilter(c, f){
   if (f === '또 갈래 ♥') return !!c.fav;
   if (f === '다녀왔어 ♪') return !c.wish;
   if (f === '가볼래 ☆') return !!c.wish;
-  return KINDS.includes(f) ? kindOf(c) === f : FEATS.includes(f) ? featsOf(c).includes(f) : (c.tags||[]).includes(f);
+  return KINDS.includes(f) ? kindsOf(c).includes(f) : FEATS.includes(f) ? featsOf(c).includes(f) : (c.tags||[]).includes(f);
 }
 async function refreshPins(){
   if (!map) return;
@@ -1401,7 +1403,7 @@ function locate(pan=true){
   });
 }
 function renderChips(){
-  const used = new Set(cafes.flatMap(c => [...(c.tags||[]), kindOf(c), ...featsOf(c)]));
+  const used = new Set(cafes.flatMap(c => [...(c.tags||[]), ...kindsOf(c), ...featsOf(c)]));
   const list = ['전체','다녀왔어 ♪','또 갈래 ♥','가볼래 ☆', ...KINDS.filter(t => used.has(t)), ...FEATS.filter(t => used.has(t)), ...TAGS.filter(t => used.has(t))];
   mapSel.tags.forEach(t => { if (!used.has(t)) mapSel.tags.delete(t); });
   const on = t => t === '전체' ? !mapSel.st.size && !mapSel.tags.size : mapSel.st.has(t) || mapSel.tags.has(t);
@@ -1453,7 +1455,7 @@ async function openSheet(id){
       ${st.rating || subLine(c.sub) ? `<button class="score tap" data-subtog="1">★ ${st.rating ? st.rating.toFixed(1) : '-'} <span class="caret">›</span></button>` : ''}
     </div>
     ${subPanelHTML(st.rating, c, st.my ? '내 별점' : '평균')}
-    <div style="margin-top:10px">${kindOf(c)?'<span class="tag kind">'+esc(kindOf(c))+'</span>':''}${featsOf(c).map(f => '<span class="tag feat">'+esc(f)+'</span>').join('')}${c.closed?'<span class="tag closedt">'+IC.door+' 문 닫음</span>':''}${c.wish?'<span class="tag wish">가볼래 ☆</span>':''}${c.fav?'<span class="tag heart">또 갈래 ♥</span>':''}${c.hideFriends?'<span class="tag">'+IC.lock+' 친구에게 숨김</span>':''}${(c.tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
+    <div style="margin-top:10px">${kindsOf(c).map(k => '<span class="tag kind">'+esc(k)+'</span>').join('')}${featsOf(c).map(f => '<span class="tag feat">'+esc(f)+'</span>').join('')}${c.closed?'<span class="tag closedt">'+IC.door+' 문 닫음</span>':''}${c.wish?'<span class="tag wish">가볼래 ☆</span>':''}${c.fav?'<span class="tag heart">또 갈래 ♥</span>':''}${c.hideFriends?'<span class="tag">'+IC.lock+' 친구에게 숨김</span>':''}${(c.tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
     ${c.closed ? `<button class="chip movebtn" data-move="${esc(c.id)}">${IC.building} 이사 갔어요 · 새 위치로 기록 옮기기</button>` : ''}
     ${c.nextTry ? `<div class="nextbar">${IC.cake} 다음엔 이거 · ${esc(c.nextTry)}</div>` : ''}
     <div class="btnrow">
@@ -1873,9 +1875,9 @@ function openCafeEditor(id, seed){
     <div class="toggle"><div>또 갈래 ♥<div class="small">다시 가고 싶은 곳은 핀이 하트 색으로 바뀌어요</div></div><button class="sw ${c.fav?'on':''}" id="cFav" aria-label="또 갈래"></button></div>
     <div class="toggle"><div>${IC.lock} 친구에게 숨기기<div class="small">켜면 이 식당과 방문 기록 전부 친구 화면·지도에 안 보여요</div></div><button class="sw ${c.hideFriends?'on':''}" id="cHide" aria-label="친구에게 숨기기"></button></div>
     <div class="toggle"><div>${IC.door} 문 닫은 곳<div class="small">폐업·휴업한 곳은 켜두세요. 핀이 회색으로 바뀌고 뽑기에서 빠져요. 기록은 그대로 남아요</div></div><button class="sw ${c.closed?'on':''}" id="cClosed" aria-label="문 닫은 곳"></button></div>
-    <label class="f">어떤 곳이에요?</label>
-    <div class="tagpick" id="cKind" style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed var(--line)">${KINDS.map(k => `<button class="chip ${kindOf(c)===k?'on':''}" data-k="${k}">${k}</button>`).join('')}</div>
-    <div class="small" style="margin:0 2px 6px">어떤 음식? (여러 개 골라도 돼요)</div>
+    <label class="f">어떤 곳이에요? <span class="small" style="font-weight:400">(줄마다 여러 개 골라도 돼요)</span></label>
+    <div class="tagpick" id="cKind" style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed var(--line)">${KINDS.map(k => `<button class="chip ${kindsOf(c).includes(k)?'on':''}" data-k="${k}">${k}</button>`).join('')}</div>
+    <div class="small" style="margin:0 2px 6px">어떤 음식?</div>
     <div class="tagpick" id="cFeat" style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed var(--line)">${FEATS.map(f => `<button class="chip ${featsOf(c).includes(f)?'on':''}" data-f="${f}">${f}</button>`).join('')}</div>
     <div class="tagpick" id="cTags">${TAGS.map(t => `<button class="chip ${c.tags.includes(t)?'on':''}" data-t="${esc(t)}">${esc(t)}</button>`).join('')}</div>
     <label class="f">메모 (와이파이 비번, 주차 팁 같은 거)</label>
@@ -1897,8 +1899,10 @@ function openCafeEditor(id, seed){
   $('#cSub').onclick = e => { const b = e.target.closest('button'); if (!b) return; const k = b.closest('.srow').dataset.k, n = +b.dataset.n; if (+c.sub[k] === n) delete c.sub[k]; else c.sub[k] = n; drawCStars(); };
   $('#cWish').onclick = e => e.currentTarget.classList.toggle('on');
   $('#cTags').onclick = e => { const b = e.target.closest('.chip'); if (b) b.classList.toggle('on'); };
-  $('#cKind').onclick = e => { const b = e.target.closest('.chip'); if (b) document.querySelectorAll('#cKind .chip').forEach(x => x.classList.toggle('on', x === b)); };
-  $('#cFeat').onclick = e => { const b = e.target.closest('.chip'); if (b) b.classList.toggle('on'); };
+  $('#cKind').onclick = e => { const b = e.target.closest('.chip'); if (!b) return; b.classList.toggle('on');
+    // 음식 성격을 직접 안 건드렸으면 바뀐 종류에 맞춰 자동값을 다시 보여줌 (술집 → 안주)
+    if (!$('#cFeat').dataset.touched && !Array.isArray(c.feats)) { const ks = [...document.querySelectorAll('#cKind .chip.on')].map(x => x.dataset.k), au = autoFeats({ ...c, kind: ks.length ? ks : undefined }); document.querySelectorAll('#cFeat .chip').forEach(x => x.classList.toggle('on', au.includes(x.dataset.f))); } };
+  $('#cFeat').onclick = e => { const b = e.target.closest('.chip'); if (b) { b.classList.toggle('on'); e.currentTarget.dataset.touched = '1'; } };
   if (id) $('#cDel').onclick = () => deleteCafe(id);
   openPage('pCafe');
 }
@@ -1913,8 +1917,8 @@ $('#cSave').onclick = once(async () => {
   if ($('#cClosed').classList.contains('on')) c.closed = true; else delete c.closed;
   c.wish = $('#cWish').classList.contains('on');
   c.tags = [...document.querySelectorAll('#cTags .chip.on')].map(b => b.dataset.t);
-  { const kb = document.querySelector('#cKind .chip.on'); if (kb) c.kind = kb.dataset.k; }
-  { const fs = [...document.querySelectorAll('#cFeat .chip.on')].map(b => b.dataset.f), au = (delete c.feats, autoFeats(c)); if (fs.length !== au.length || fs.some(f => !au.includes(f))) c.feats = fs; }
+  { const ks = [...document.querySelectorAll('#cKind .chip.on')].map(b => b.dataset.k); if (ks.length) c.kind = ks.length === 1 ? ks[0] : ks; else delete c.kind; }
+  if ($('#cFeat').dataset.touched) { const fs = [...document.querySelectorAll('#cFeat .chip.on')].map(b => b.dataset.f), au = (delete c.feats, autoFeats(c)); if (fs.length !== au.length || fs.some(f => !au.includes(f))) c.feats = fs; }
   c.memo = $('#cMemo').value.trim();
   if (c.sub && !Object.keys(c.sub).length) delete c.sub;
   c.updatedAt = Date.now(); c.dirty = true;
@@ -2131,7 +2135,7 @@ async function openDetail(id, keep){
     <div class="subpick" id="dSub">${SUBS.map(([k, n]) => `<div class="srow" data-k="${k}"><span class="sl">${n}</span><div class="starpick">${[1,2,3,4,5].map(i => `<button data-n="${i}" aria-label="${n} ${i}점" class="${i <= (+c.sub?.[k] || 0) ? 'on' : ''}">★</button>`).join('')}</div></div>`).join('')}<div class="small" style="margin-top:2px">골라서만 매겨도 돼요. 다시 누르면 지워져요.</div></div>
     ${c.closed ? `<button class="chip movebtn" style="margin-top:12px" data-move="${esc(c.id)}">${IC.building} 이사 갔어요 · 새 위치로 기록 옮기기</button>` : ''}
     ${(c.moves || []).length ? `<div class="small" style="margin-top:10px;line-height:1.6">${c.moves.slice().reverse().map(m => `${IC.building} 이사 전: ${esc(m.name)} · ${esc(m.roadAddress || m.address || '')}${m.until ? ' (~' + esc(m.until) + ')' : ''}`).join('<br>')}</div>` : ''}
-    <div style="margin-top:12px">${kindOf(c)?'<span class="tag kind">'+esc(kindOf(c))+'</span>':''}${featsOf(c).map(f => '<span class="tag feat">'+esc(f)+'</span>').join('')}${c.closed?'<span class="tag closedt">'+IC.door+' 문 닫음</span>':''}${c.wish?'<span class="tag wish">가볼래 ☆</span>':''}${c.fav?'<span class="tag heart">또 갈래 ♥</span>':''}${(c.tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
+    <div style="margin-top:12px">${kindsOf(c).map(k => '<span class="tag kind">'+esc(k)+'</span>').join('')}${featsOf(c).map(f => '<span class="tag feat">'+esc(f)+'</span>').join('')}${c.closed?'<span class="tag closedt">'+IC.door+' 문 닫음</span>':''}${c.wish?'<span class="tag wish">가볼래 ☆</span>':''}${c.fav?'<span class="tag heart">또 갈래 ♥</span>':''}${(c.tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
     <div class="stats" style="margin-top:12px"><div class="stat"><b>${st.count}</b><span>방문 기록</span></div><div class="stat"><b>${all.length}</b><span>사진</span></div><div class="stat"><b>${spent?Math.round(spent/1000)+'k':'-'}</b><span>쓴 돈</span></div></div>
     ${c.memo?`<div class="note" style="margin-top:12px"><div class="meta">메모</div>${esc(c.memo)}</div>`:''}
     <div class="nexttry" id="dNext"><span class="lb">${IC.cake} 다음엔 이거</span><span class="v">${c.nextTry ? esc(c.nextTry) : '<span style="color:var(--sub)">먹어보고 싶은 메뉴를 적어두세요</span>'}</span><button class="textbtn" id="dNextEdit">${c.nextTry ? '수정' : '적기'}</button></div>
@@ -2250,7 +2254,7 @@ let sortBy = 'recent'; const listSel = { st: new Set(), tags: new Set() };
 try { sortBy = LS.getItem('sortBy') || 'recent'; } catch {}
 function renderSort(){
   $('#sortSeg').innerHTML = SORTS.map(([k,n]) => `<button class="chip ${k===sortBy?'on':''}" data-k="${k}">${n}</button>`).join('');
-  const used = new Set(cafes.flatMap(c => [...(c.tags||[]), kindOf(c), ...featsOf(c)]));
+  const used = new Set(cafes.flatMap(c => [...(c.tags||[]), ...kindsOf(c), ...featsOf(c)]));
   const tags = ['전체','다녀왔어 ♪','또 갈래 ♥','가볼래 ☆', ...KINDS.filter(t => used.has(t)), ...FEATS.filter(t => used.has(t)), ...TAGS.filter(t => used.has(t))];
   listSel.tags.forEach(t => { if (!used.has(t)) listSel.tags.delete(t); });
   const on = t => t === '전체' ? !listSel.st.size && !listSel.tags.size : listSel.st.has(t) || listSel.tags.has(t);
@@ -2295,7 +2299,7 @@ async function renderList(){
   if (!rows.length) { $('#list').innerHTML = `<div class="empty">조건에 맞는 식당이 없어요.</div>`; return; }
   const html = await Promise.all(rows.map(async ({c, st, d}) => {
     const cover = coverOf(c, st); const url = cover ? await getPhotoURL(cover) : '';
-    const sk = [c.name, c.address, c.roadAddress, c.memo, ...(c.tags||[]), kindOf(c), ...featsOf(c), ...visitsOf(c.id).flatMap(v => [v.menu, v.review])].join(' ').toLowerCase();
+    const sk = [c.name, c.address, c.roadAddress, c.memo, ...(c.tags||[]), ...kindsOf(c), ...featsOf(c), ...visitsOf(c.id).flatMap(v => [v.menu, v.review])].join(' ').toLowerCase();
     return `<button class="item" data-id="${c.id}" data-s="${esc(sk)}" style="width:100%;text-align:left">
       <div class="thumbpol" style="transform:rotate(${hashRot(c.id,0)}deg)"><div style="${url?`background-image:url('${url}')`:''}">${url?'':cupIcon(c.id, c)}</div></div>
       <div class="info"><div class="nm">${c.wish?'<span style="color:var(--sub)">☆</span> ':c.fav?'<span style="color:var(--heartt)">♥</span> ':''}${esc(c.name)}</div>
@@ -3559,7 +3563,7 @@ $('#btnAiCsv').onclick = () => { dlText(`맛집로그-기록표-${todayStr()}.cs
 const pickOpt = { scope: '전체', dist: 0, tags: [], friends: false };
 let lastPickId = null;
 function openPick(){
-  const used = [...new Set(cafes.flatMap(c => c.tags||[]))], usedK = KINDS.filter(k => cafes.some(c => kindOf(c) === k)), usedF = FEATS.filter(f => cafes.some(c => featsOf(c).includes(f)));
+  const used = [...new Set(cafes.flatMap(c => c.tags||[]))], usedK = KINDS.filter(k => cafes.some(c => kindsOf(c).includes(k))), usedF = FEATS.filter(f => cafes.some(c => featsOf(c).includes(f)));
   const chips = (arr, cur, key) => arr.map(([v,n]) => `<button class="chip ${cur===v?'on':''}" data-${key}="${v}">${n}</button>`).join('');
   $('#pickBody').innerHTML = `
     <label class="f" style="margin-top:4px">어디서 고를까?</label>
@@ -3685,7 +3689,7 @@ const myName = () => { const m = session?.user?.user_metadata || {}; return m.na
 function openShareMaker(){
   if (!session) { ask('공유 링크는 로그인해야 만들 수 있어요.\n로그인할까요?', '로그인').then(ok => ok && openLogin()); return; }
   shSel.clear(); shOpt.q = ''; shOpt.review = false; shOpt.photo = false;
-  const used = [...KINDS.filter(k => cafes.some(c => kindOf(c) === k)), ...FEATS.filter(f => cafes.some(c => featsOf(c).includes(f))), ...new Set(cafes.flatMap(c => c.tags||[]))];
+  const used = [...KINDS.filter(k => cafes.some(c => kindsOf(c).includes(k))), ...FEATS.filter(f => cafes.some(c => featsOf(c).includes(f))), ...new Set(cafes.flatMap(c => c.tags||[]))];
   $('#shBody').innerHTML = `
     <label class="f" style="margin-top:4px">제목</label><input class="inp" id="shTitle" value="${esc((myName() ? myName() + '의 ' : '') + '맛집 리스트')}">
     <div class="toggle"><div>후기랑 메뉴 같이 보여주기</div><button class="sw" id="shRev" aria-label="후기 포함"></button></div>
@@ -4360,7 +4364,7 @@ function shareSheet(c, pan){
   $('#sheet').innerHTML = `<div class="grab"></div>
     ${c.thumb ? `<div class="pols" style="height:150px"><div class="pol" style="left:0;top:4px;transform:rotate(-3deg)"><div style="background-image:url('${c.thumb}')"></div></div></div>` : ''}
     <div class="rowsb"><div style="min-width:0"><div class="title">${esc(c.name)}</div><div class="subt">${esc(shortAddr(c))}${c.category ? ' · ' + esc(c.category.split(' > ').pop()) : ''}</div></div>${c.rating ? `<div class="score">★ ${c.rating.toFixed(1)}</div>` : ''}</div>
-    <div style="margin-top:10px">${kindOf(c)?'<span class="tag kind">'+esc(kindOf(c))+'</span>':''}${featsOf(c).map(f => '<span class="tag feat">'+esc(f)+'</span>').join('')}${c.closed?'<span class="tag closedt">'+IC.door+' 문 닫음</span>':''}${c.wish ? '<span class="tag wish">가볼래 ☆</span>' : ''}${c.fav ? '<span class="tag heart">또 갈래 ♥</span>' : ''}${(c.tags||[]).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
+    <div style="margin-top:10px">${kindsOf(c).map(k => '<span class="tag kind">'+esc(k)+'</span>').join('')}${featsOf(c).map(f => '<span class="tag feat">'+esc(f)+'</span>').join('')}${c.closed?'<span class="tag closedt">'+IC.door+' 문 닫음</span>':''}${c.wish ? '<span class="tag wish">가볼래 ☆</span>' : ''}${c.fav ? '<span class="tag heart">또 갈래 ♥</span>' : ''}${(c.tags||[]).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
     ${c.review || c.menu ? `<div class="note" style="margin-top:8px">${c.menu ? `<div class="meta">${esc(c.menu)}</div>` : ''}${esc(c.review || '')}</div>` : ''}
     <div class="linkrow" style="margin-top:14px">
       <a class="btn kakao" href="${kakaoUrl(c)}" target="_blank" rel="noopener">카카오맵</a>
@@ -4491,7 +4495,7 @@ async function refreshAll(){
 /* =========================================================
    앱 업데이트 (홈 화면에 깔린 앱이 옛 화면을 붙잡고 있을 때)
    ========================================================= */
-const APP_VERSION = '2026.11.21-8'; // 고칠 때마다 올림
+const APP_VERSION = '2026.11.21-9'; // 고칠 때마다 올림
 // 새 버전 확인: 파일 맨 앞 2KB만 받아서 버전 표시만 읽음 (안 되면 전체를 받아 확인)
 async function latestVersion(){
   try {

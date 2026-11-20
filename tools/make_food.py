@@ -34,7 +34,7 @@ def rep_block(start, end, new):
     s = s[:i] + new + s[j + len(end):]
 
 
-VERSION = '2026.11.20-3'
+VERSION = '2026.11.21-1'
 
 # ---------------------------------------------------------------
 # 1) 같은 주소(pjgon1.github.io)를 쓰는 커피로그와 이 기기 저장 칸이 안 섞이게
@@ -172,6 +172,59 @@ for a, b in THEME_NAMES.items():
 rep("let cur = 'coffee'; try { cur = LS.getItem('theme') || 'coffee'; }", "let cur = 'gochujang'; try { cur = LS.getItem('theme') || 'gochujang'; }")
 rep("let th = 'coffee'; try { th = LS.getItem('theme') || 'coffee'; }", "let th = 'gochujang'; try { th = LS.getItem('theme') || 'gochujang'; }")
 rep('<meta name="theme-color" content="#FFFDF9">', '<meta name="theme-color" content="#FFF9F5">')
+
+# ---------------------------------------------------------------
+# 4b) 종류 (한식·양식·일식…): 직접 고른 값이 없으면 카카오 분류로 자동
+# ---------------------------------------------------------------
+KIND_JS = r"""const KINDS = ['한식', '양식', '일식', '중식', '아시안', '패스트푸드', '기타'];
+// 종류: 식당 정보에서 고른 값 → 없으면 카카오 분류(음식점 > 한식 > …)로 자동
+const autoKind = cat => {
+  const s = cat || ''; if (!s) return '';
+  if (/패스트푸드|햄버거|치킨|핫도그/.test(s)) return '패스트푸드';
+  if (/일식|일본식|초밥|스시|돈까스|돈가스|라멘|우동|이자카야/.test(s)) return '일식';
+  if (/중식|중국요리|양꼬치|마라/.test(s)) return '중식';
+  if (/아시아|베트남|태국|인도|동남아|쌀국수|멕시|터키|중동/.test(s)) return '아시안';
+  if (/양식|이탈리|프랑스|스페인|스테이크|파스타|패밀리레스토랑/.test(s)) return '양식';
+  if (/피자|샌드위치|토스트/.test(s)) return '패스트푸드';
+  if (/한식|분식|국밥|해장국|고기|해물|생선|찌개|냉면|삼계탕|족발|보쌈|백반|칼국수|국수/.test(s)) return '한식';
+  return '기타';
+};
+const kindOf = c => (c && (c.kind || autoKind(c.category))) || '';
+// 칩 거르기: 종류는 고른 것 중 하나만 맞으면, 태그는 고른 게 다 있어야
+const passTags = (c, sel) => { const a = [...sel], ks = a.filter(t => KINDS.includes(t)); return (!ks.length || ks.includes(kindOf(c))) && a.filter(t => !KINDS.includes(t)).every(t => (c.tags || []).includes(t)); };
+"""
+rep("const TAGS = ['혼밥 가능',", KIND_JS + "const TAGS = ['혼밥 가능',")
+rep("[...mapSel.tags].every(t => (c.tags || []).includes(t))", "passTags(c, mapSel.tags)", 2)
+rep("[...listSel.tags].every(t => (c.tags || []).includes(t))", "passTags(c, listSel.tags)")
+rep("return (c.tags||[]).includes(f);", "return KINDS.includes(f) ? kindOf(c) === f : (c.tags||[]).includes(f);")
+rep("const used = new Set(cafes.flatMap(c => c.tags||[]));", "const used = new Set(cafes.flatMap(c => [...(c.tags||[]), kindOf(c)]));", 2)
+rep("const list = ['전체','다녀왔어 ♪','또 갈래 ♥','가볼래 ☆', ...TAGS.filter(t => used.has(t))];",
+    "const list = ['전체','다녀왔어 ♪','또 갈래 ♥','가볼래 ☆', ...KINDS.filter(t => used.has(t)), ...TAGS.filter(t => used.has(t))];")
+rep("const tags = ['전체','다녀왔어 ♪','또 갈래 ♥','가볼래 ☆', ...TAGS.filter(t => used.has(t))];",
+    "const tags = ['전체','다녀왔어 ♪','또 갈래 ♥','가볼래 ☆', ...KINDS.filter(t => used.has(t)), ...TAGS.filter(t => used.has(t))];")
+rep("...(c.tags||[]), ...visitsOf(c.id)", "...(c.tags||[]), kindOf(c), ...visitsOf(c.id)")
+rep("""">${c.closed?'<span class="tag closedt">'""", """">${kindOf(c)?'<span class="tag kind">'+esc(kindOf(c))+'</span>':''}${c.closed?'<span class="tag closedt">'""", 3)
+rep(".tag.wish{background:transparent;color:var(--sub);border:1px dashed var(--sub)}",
+    ".tag.wish{background:transparent;color:var(--sub);border:1px dashed var(--sub)}\n.tag.kind{background:var(--acc);color:var(--onacc);font-weight:600}")
+# 식당 정보 편집: '어떤 곳이에요?' 맨 위에 종류 고르기
+rep("""<div class="tagpick" id="cTags">""",
+    """<div class="tagpick" id="cKind" style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed var(--line)">${KINDS.map(k => `<button class="chip ${kindOf(c)===k?'on':''}" data-k="${k}">${k}</button>`).join('')}</div>
+    <div class="tagpick" id="cTags">""")
+rep("$('#cTags').onclick = e => { const b = e.target.closest('.chip'); if (b) b.classList.toggle('on'); };",
+    "$('#cTags').onclick = e => { const b = e.target.closest('.chip'); if (b) b.classList.toggle('on'); };\n  $('#cKind').onclick = e => { const b = e.target.closest('.chip'); if (b) document.querySelectorAll('#cKind .chip').forEach(x => x.classList.toggle('on', x === b)); };")
+rep("c.tags = [...document.querySelectorAll('#cTags .chip.on')].map(b => b.dataset.t);",
+    "c.tags = [...document.querySelectorAll('#cTags .chip.on')].map(b => b.dataset.t);\n  { const kb = document.querySelector('#cKind .chip.on'); if (kb) c.kind = kb.dataset.k; }")
+# 오늘 어디 갈까: '뭐 먹을까?' 줄
+rep("function openPick(){\n  const used = [...new Set(cafes.flatMap(c => c.tags||[]))];",
+    "function openPick(){\n  const used = [...new Set(cafes.flatMap(c => c.tags||[]))], usedK = KINDS.filter(k => cafes.some(c => kindOf(c) === k));")
+# 공유 링크 '빠르게 고르기'에도 종류
+rep("shOpt.photo = false;\n  const used = [...new Set(cafes.flatMap(c => c.tags||[]))];",
+    "shOpt.photo = false;\n  const used = [...KINDS.filter(k => cafes.some(c => kindOf(c) === k)), ...new Set(cafes.flatMap(c => c.tags||[]))];")
+rep("""${used.length ? `<label class="f">이런 곳이면 좋겠어""",
+    """${usedK.length ? `<label class="f">뭐 먹을까? (여러 개 고르면 그중 하나)</label><div class="tagpick">${usedK.map(t => `<button class="chip ${pickOpt.tags.includes(t)?'on':''}" data-tg="${esc(t)}">${esc(t)}</button>`).join('')}</div>` : ''}
+    ${used.length ? `<label class="f">이런 곳이면 좋겠어""")
+rep("if (pickOpt.tags.some(t => !(c.tags||[]).includes(t))) return false;", "if (!passTags(c, pickOpt.tags)) return false;")
+rep("if (pickOpt.tags.some(t => !(c.tags || []).includes(t))) continue;", "if (!passTags(c, pickOpt.tags)) continue;")
 
 # ---------------------------------------------------------------
 # 5) 글자: 커피로그 → 맛집로그, 카페 → 식당 (꾸미는 말은 맛집)

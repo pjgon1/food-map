@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="2026.11.20-1">
+<meta name="app-version" content="2026.11.20-2">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#FFF9F5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,7 +13,7 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <!-- 보안: 아래 script-src 의 sha256 두 개는 이 파일 안 인라인 스크립트 두 덩어리의 해시. 스크립트를 고치면 해시도 다시 계산해서 바꿔야 앱이 열림 -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IPTHRSGmeYrNSOO3QK4KY36tTY/VnE+Mx7/hZB8FcZs=' 'sha256-1wsgaF13SQy+4SXoNRmJpsFwEMX9I2tVOT1YJKBsvzM=' https://dapi.kakao.com https://*.kakaocdn.net https://*.daumcdn.net https://cdn.jsdelivr.net; connect-src 'self' https://wqzndhwuylzpgauoldpv.supabase.co wss://wqzndhwuylzpgauoldpv.supabase.co https://*.kakao.com https://*.kakaocdn.net https://*.daum.net https://*.daumcdn.net https://api.open-meteo.com https://archive-api.open-meteo.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self'; manifest-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IPTHRSGmeYrNSOO3QK4KY36tTY/VnE+Mx7/hZB8FcZs=' 'sha256-Zccrhs1NKzmzTzke/05Nyq1Ls3xLw6057fk/Dnyrcy4=' https://dapi.kakao.com https://*.kakaocdn.net https://*.daumcdn.net https://cdn.jsdelivr.net; connect-src 'self' https://wqzndhwuylzpgauoldpv.supabase.co wss://wqzndhwuylzpgauoldpv.supabase.co https://*.kakao.com https://*.kakaocdn.net https://*.daum.net https://*.daumcdn.net https://api.open-meteo.com https://archive-api.open-meteo.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self'; manifest-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <title>맛집로그</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -731,26 +731,26 @@ const TAGS = ['혼밥 가능','가성비','양 많음','웨이팅 있음','예�
 const THEMES = [
   {k:'gochujang',n:'고추장',    bg:'#FFF9F5',ink:'#3A221C',sub:'#9C7D73',acc:'#C9472D',onacc:'#fff',soft:'#FCE2D9',softt:'#A63A22',note:'#FDF0EA',heart:'#FCE7EA',heartt:'#C2405E',line:'#F4DDD3',frame:'#fff',ph:'#F6CFC1'},
   {k:'coffee',  n:'누룽지', bg:'#FFFDF9',ink:'#2A2522',sub:'#8A817A',acc:'#6F4E37',onacc:'#fff',soft:'#F3EBE3',softt:'#6F4E37',note:'#F7F2EC',heart:'#FCEFEF',heartt:'#B4475A',line:'#EDE5DC',frame:'#fff',ph:'#E7D3BE'},
-  {k:'matcha',  n:'말차 라떼',   bg:'#FBFCF7',ink:'#26302A',sub:'#7D877F',acc:'#5E7D55',onacc:'#fff',soft:'#E9F0E2',softt:'#476140',note:'#F2F5EC',heart:'#FBEFEA',heartt:'#B25B3E',line:'#E3E9DA',frame:'#fff',ph:'#DCE6CF'},
+  {k:'matcha',  n:'깻잎',   bg:'#FBFCF7',ink:'#26302A',sub:'#7D877F',acc:'#5E7D55',onacc:'#fff',soft:'#E9F0E2',softt:'#476140',note:'#F2F5EC',heart:'#FBEFEA',heartt:'#B25B3E',line:'#E3E9DA',frame:'#fff',ph:'#DCE6CF'},
   {k:'vanilla', n:'계란말이', bg:'#FFFCF2',ink:'#3A3226',sub:'#968A74',acc:'#C98A2E',onacc:'#fff',soft:'#FBEFD6',softt:'#8E5C14',note:'#FBF5E6',heart:'#FCEEEA',heartt:'#C0533C',line:'#F1E6CC',frame:'#fff',ph:'#F7E8C8'},
-  {k:'berry',   n:'딸기 우유',   bg:'#FFFAFA',ink:'#3A2A2D',sub:'#9A8487',acc:'#D2647D',onacc:'#fff',soft:'#FBE6EB',softt:'#A84860',note:'#FCF1F3',heart:'#FBE6EB',heartt:'#C2405E',line:'#F4DFE4',frame:'#fff',ph:'#F8DDE3'},
-  {k:'earlgrey',n:'얼그레이',    bg:'#F9F9FB',ink:'#2B2D35',sub:'#83869A',acc:'#6B6F9E',onacc:'#fff',soft:'#E8E9F3',softt:'#4E5285',note:'#F0F1F6',heart:'#F7ECF0',heartt:'#A8506E',line:'#E4E5EE',frame:'#fff',ph:'#DADCEA'},
-  {k:'soda',    n:'소다 라떼',   bg:'#F8FCFF',ink:'#1F2C38',sub:'#7A8B99',acc:'#3E8FC6',onacc:'#fff',soft:'#E1F0FA',softt:'#2A6E9C',note:'#EEF6FC',heart:'#FCEDEE',heartt:'#C24B55',line:'#DCEAF4',frame:'#fff',ph:'#CFE5F4'},
-  {k:'grapefruit',n:'자몽 에이드',bg:'#FFFAF7',ink:'#3A2621',sub:'#9C8178',acc:'#E2694A',onacc:'#fff',soft:'#FDE6DE',softt:'#B04A2F',note:'#FDF1EC',heart:'#FCE7EA',heartt:'#C2405E',line:'#F5E0D8',frame:'#fff',ph:'#F9D5C8'},
-  {k:'blueberry',n:'블루베리 요거트',bg:'#FCFAFE',ink:'#2D2638',sub:'#8B8299',acc:'#7B5EA7',onacc:'#fff',soft:'#EEE7F7',softt:'#5D4388',note:'#F5F1FA',heart:'#FBEBF0',heartt:'#B3466B',line:'#ECE5F3',frame:'#fff',ph:'#E2D7F0'},
-  {k:'sesame',  n:'흑임자',      bg:'#FAF9F7',ink:'#1F1E1C',sub:'#7F7B75',acc:'#3B3936',onacc:'#fff',soft:'#ECEAE6',softt:'#3B3936',note:'#F2F0EC',heart:'#F8ECEC',heartt:'#A8474F',line:'#E5E2DD',frame:'#fff',ph:'#D9D5CE'},
+  {k:'berry',   n:'명란',   bg:'#FFFAFA',ink:'#3A2A2D',sub:'#9A8487',acc:'#D2647D',onacc:'#fff',soft:'#FBE6EB',softt:'#A84860',note:'#FCF1F3',heart:'#FBE6EB',heartt:'#C2405E',line:'#F4DFE4',frame:'#fff',ph:'#F8DDE3'},
+  {k:'earlgrey',n:'메밀',    bg:'#F9F9FB',ink:'#2B2D35',sub:'#83869A',acc:'#6B6F9E',onacc:'#fff',soft:'#E8E9F3',softt:'#4E5285',note:'#F0F1F6',heart:'#F7ECF0',heartt:'#A8506E',line:'#E4E5EE',frame:'#fff',ph:'#DADCEA'},
+  {k:'soda',    n:'물냉면',   bg:'#F8FCFF',ink:'#1F2C38',sub:'#7A8B99',acc:'#3E8FC6',onacc:'#fff',soft:'#E1F0FA',softt:'#2A6E9C',note:'#EEF6FC',heart:'#FCEDEE',heartt:'#C24B55',line:'#DCEAF4',frame:'#fff',ph:'#CFE5F4'},
+  {k:'grapefruit',n:'떡볶이',bg:'#FFFAF7',ink:'#3A2621',sub:'#9C8178',acc:'#E2694A',onacc:'#fff',soft:'#FDE6DE',softt:'#B04A2F',note:'#FDF1EC',heart:'#FCE7EA',heartt:'#C2405E',line:'#F5E0D8',frame:'#fff',ph:'#F9D5C8'},
+  {k:'blueberry',n:'가지',bg:'#FCFAFE',ink:'#2D2638',sub:'#8B8299',acc:'#7B5EA7',onacc:'#fff',soft:'#EEE7F7',softt:'#5D4388',note:'#F5F1FA',heart:'#FBEBF0',heartt:'#B3466B',line:'#ECE5F3',frame:'#fff',ph:'#E2D7F0'},
+  {k:'sesame',  n:'짜장',      bg:'#FAF9F7',ink:'#1F1E1C',sub:'#7F7B75',acc:'#3B3936',onacc:'#fff',soft:'#ECEAE6',softt:'#3B3936',note:'#F2F0EC',heart:'#F8ECEC',heartt:'#A8474F',line:'#E5E2DD',frame:'#fff',ph:'#D9D5CE'},
   {k:'night',   n:'심야 식당 (다크)',bg:'#221C18',ink:'#F3ECE4',sub:'#A99D91',acc:'#D7A86E',onacc:'#221C18',soft:'#3A302A',softt:'#E8C9A0',note:'#2D2520',heart:'#3D2A2C',heartt:'#F0A3B1',line:'#3A302A',frame:'#F3ECE4',ph:'#4E3E33'},
   // 더보기 테마
-  {more:1,k:'hojicha', n:'호지차 라떼',  bg:'#FCF8F4',ink:'#33261E',sub:'#8F7C6E',acc:'#A0613A',onacc:'#fff',soft:'#F3E3D6',softt:'#7E4824',note:'#F8F0E8',heart:'#FBECEA',heartt:'#B4475A',line:'#EEE1D5',frame:'#fff',ph:'#E9D2BF'},
-  {more:1,k:'lemon',   n:'레몬 마들렌',  bg:'#FFFEF5',ink:'#35321F',sub:'#8F8A6B',acc:'#B59A12',onacc:'#fff',soft:'#FAF3C8',softt:'#7A6608',note:'#FDF9E3',heart:'#FCEEEA',heartt:'#C0533C',line:'#F1EBC6',frame:'#fff',ph:'#F5ECB5'},
-  {more:1,k:'mintchoco',n:'민트 초코',   bg:'#F7FCFA',ink:'#2B211D',sub:'#7C8A85',acc:'#2FA58A',onacc:'#fff',soft:'#DDF3EC',softt:'#1E7863',note:'#EDF8F4',heart:'#F6ECE8',heartt:'#7A4A36',line:'#D9EDE6',frame:'#fff',ph:'#C9EADF'},
-  {more:1,k:'peach',   n:'복숭아 아이스티',bg:'#FFF9F6',ink:'#3A2822',sub:'#9E857B',acc:'#EE8A6A',onacc:'#fff',soft:'#FDE7DD',softt:'#B85A3C',note:'#FEF2EC',heart:'#FCE6EA',heartt:'#C4485F',line:'#F7E2D9',frame:'#fff',ph:'#FAD6C6'},
-  {more:1,k:'lavender',n:'라벤더 라떼',  bg:'#FBFAFE',ink:'#2E2A3A',sub:'#8B869C',acc:'#9479C9',onacc:'#fff',soft:'#EEE9FA',softt:'#6A51A3',note:'#F5F2FC',heart:'#FAEBF1',heartt:'#B04A76',line:'#EBE6F6',frame:'#fff',ph:'#E2DAF5'},
-  {more:1,k:'caramel', n:'카라멜 마키아또',bg:'#FFFBF5',ink:'#35261A',sub:'#957F6A',acc:'#C47A2C',onacc:'#fff',soft:'#F8E8D2',softt:'#8F5413',note:'#FCF3E6',heart:'#FBECE8',heartt:'#B9473F',line:'#F2E3CE',frame:'#fff',ph:'#F0D7B6'},
-  {more:1,k:'yuzu',    n:'유자차',       bg:'#FFFCF4',ink:'#382E1C',sub:'#988B6F',acc:'#E09B12',onacc:'#fff',soft:'#FDF0CF',softt:'#9A6400',note:'#FEF7E4',heart:'#FCEDE9',heartt:'#C24D3A',line:'#F5E9C7',frame:'#fff',ph:'#FAE3AD'},
-  {more:1,k:'cherry',  n:'체리 콕',      bg:'#FFF8F8',ink:'#36191D',sub:'#9C7F83',acc:'#C2283F',onacc:'#fff',soft:'#FBE1E5',softt:'#97182C',note:'#FDF0F2',heart:'#FBE1E5',heartt:'#C2283F',line:'#F4DADF',frame:'#fff',ph:'#F6CDD4'},
-  {more:1,k:'seasalt', n:'바다 소금빵',  bg:'#F6FBFB',ink:'#1E2E31',sub:'#78898C',acc:'#2E8C93',onacc:'#fff',soft:'#DCEFF0',softt:'#1C6B71',note:'#EBF6F6',heart:'#FBECEC',heartt:'#B8474F',line:'#D7E9EA',frame:'#fff',ph:'#C7E3E5'},
-  {more:1,k:'lounge',  n:'심야 라운지 (다크)',bg:'#161B26',ink:'#E8ECF4',sub:'#959DB0',acc:'#7FA6E8',onacc:'#161B26',soft:'#252D3D',softt:'#B5CBF2',note:'#1E2532',heart:'#33263A',heartt:'#F2A6C4',line:'#283041',frame:'#E8ECF4',ph:'#323C50'},
+  {more:1,k:'hojicha', n:'된장',  bg:'#FCF8F4',ink:'#33261E',sub:'#8F7C6E',acc:'#A0613A',onacc:'#fff',soft:'#F3E3D6',softt:'#7E4824',note:'#F8F0E8',heart:'#FBECEA',heartt:'#B4475A',line:'#EEE1D5',frame:'#fff',ph:'#E9D2BF'},
+  {more:1,k:'lemon',   n:'단무지',  bg:'#FFFEF5',ink:'#35321F',sub:'#8F8A6B',acc:'#B59A12',onacc:'#fff',soft:'#FAF3C8',softt:'#7A6608',note:'#FDF9E3',heart:'#FCEEEA',heartt:'#C0533C',line:'#F1EBC6',frame:'#fff',ph:'#F5ECB5'},
+  {more:1,k:'mintchoco',n:'미나리',   bg:'#F7FCFA',ink:'#2B211D',sub:'#7C8A85',acc:'#2FA58A',onacc:'#fff',soft:'#DDF3EC',softt:'#1E7863',note:'#EDF8F4',heart:'#F6ECE8',heartt:'#7A4A36',line:'#D9EDE6',frame:'#fff',ph:'#C9EADF'},
+  {more:1,k:'peach',   n:'연어',bg:'#FFF9F6',ink:'#3A2822',sub:'#9E857B',acc:'#EE8A6A',onacc:'#fff',soft:'#FDE7DD',softt:'#B85A3C',note:'#FEF2EC',heart:'#FCE6EA',heartt:'#C4485F',line:'#F7E2D9',frame:'#fff',ph:'#FAD6C6'},
+  {more:1,k:'lavender',n:'자색고구마',  bg:'#FBFAFE',ink:'#2E2A3A',sub:'#8B869C',acc:'#9479C9',onacc:'#fff',soft:'#EEE9FA',softt:'#6A51A3',note:'#F5F2FC',heart:'#FAEBF1',heartt:'#B04A76',line:'#EBE6F6',frame:'#fff',ph:'#E2DAF5'},
+  {more:1,k:'caramel', n:'돈까스',bg:'#FFFBF5',ink:'#35261A',sub:'#957F6A',acc:'#C47A2C',onacc:'#fff',soft:'#F8E8D2',softt:'#8F5413',note:'#FCF3E6',heart:'#FBECE8',heartt:'#B9473F',line:'#F2E3CE',frame:'#fff',ph:'#F0D7B6'},
+  {more:1,k:'yuzu',    n:'카레',       bg:'#FFFCF4',ink:'#382E1C',sub:'#988B6F',acc:'#E09B12',onacc:'#fff',soft:'#FDF0CF',softt:'#9A6400',note:'#FEF7E4',heart:'#FCEDE9',heartt:'#C24D3A',line:'#F5E9C7',frame:'#fff',ph:'#FAE3AD'},
+  {more:1,k:'cherry',  n:'김치',      bg:'#FFF8F8',ink:'#36191D',sub:'#9C7F83',acc:'#C2283F',onacc:'#fff',soft:'#FBE1E5',softt:'#97182C',note:'#FDF0F2',heart:'#FBE1E5',heartt:'#C2283F',line:'#F4DADF',frame:'#fff',ph:'#F6CDD4'},
+  {more:1,k:'seasalt', n:'물회',  bg:'#F6FBFB',ink:'#1E2E31',sub:'#78898C',acc:'#2E8C93',onacc:'#fff',soft:'#DCEFF0',softt:'#1C6B71',note:'#EBF6F6',heart:'#FBECEC',heartt:'#B8474F',line:'#D7E9EA',frame:'#fff',ph:'#C7E3E5'},
+  {more:1,k:'lounge',  n:'포장마차 (다크)',bg:'#161B26',ink:'#E8ECF4',sub:'#959DB0',acc:'#7FA6E8',onacc:'#161B26',soft:'#252D3D',softt:'#B5CBF2',note:'#1E2532',heart:'#33263A',heartt:'#F2A6C4',line:'#283041',frame:'#E8ECF4',ph:'#323C50'},
 ];
 
 /* =========================================================
@@ -4212,7 +4212,7 @@ async function refreshAll(){
 /* =========================================================
    앱 업데이트 (홈 화면에 깔린 앱이 옛 화면을 붙잡고 있을 때)
    ========================================================= */
-const APP_VERSION = '2026.11.20-1'; // 고칠 때마다 올림
+const APP_VERSION = '2026.11.20-2'; // 고칠 때마다 올림
 // 새 버전 확인: 파일 맨 앞 2KB만 받아서 버전 표시만 읽음 (안 되면 전체를 받아 확인)
 async function latestVersion(){
   try {

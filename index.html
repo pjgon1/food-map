@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="2026.11.20-2">
+<meta name="app-version" content="2026.11.20-3">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#FFF9F5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,7 +13,7 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <!-- 보안: 아래 script-src 의 sha256 두 개는 이 파일 안 인라인 스크립트 두 덩어리의 해시. 스크립트를 고치면 해시도 다시 계산해서 바꿔야 앱이 열림 -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IPTHRSGmeYrNSOO3QK4KY36tTY/VnE+Mx7/hZB8FcZs=' 'sha256-Zccrhs1NKzmzTzke/05Nyq1Ls3xLw6057fk/Dnyrcy4=' https://dapi.kakao.com https://*.kakaocdn.net https://*.daumcdn.net https://cdn.jsdelivr.net; connect-src 'self' https://wqzndhwuylzpgauoldpv.supabase.co wss://wqzndhwuylzpgauoldpv.supabase.co https://*.kakao.com https://*.kakaocdn.net https://*.daum.net https://*.daumcdn.net https://api.open-meteo.com https://archive-api.open-meteo.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self'; manifest-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IPTHRSGmeYrNSOO3QK4KY36tTY/VnE+Mx7/hZB8FcZs=' 'sha256-SM0r8jjq5ryZ2dIpXcXhJjDES7Z8BgzRcGf2bo2wSuw=' https://dapi.kakao.com https://*.kakaocdn.net https://*.daumcdn.net https://cdn.jsdelivr.net; connect-src 'self' https://wqzndhwuylzpgauoldpv.supabase.co wss://wqzndhwuylzpgauoldpv.supabase.co https://*.kakao.com https://*.kakaocdn.net https://*.daum.net https://*.daumcdn.net https://api.open-meteo.com https://archive-api.open-meteo.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self'; manifest-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <title>맛집로그</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -955,7 +955,7 @@ function fetchRemotePhoto(id, kind, existing){
 const once = fn => { let busy = false; return async (...a) => { if (busy) return; busy = true; try { return await fn(...a); } finally { busy = false; } }; };
 const visitsOf = cid => visits.filter(v => v.cafeId === cid).sort((a,b) => (b.date||'').localeCompare(a.date||'') || b.createdAt - a.createdAt);
 /* 항목별 별점: 맛 / 분위기 / 자리 / 취향 (안 매긴 항목은 평균에서 빼기) */
-const SUBS = [['taste', '맛'], ['value', '가성비'], ['mood', '분위기'], ['service', '서비스']];
+const SUBS = [['taste', '맛'], ['value', '가성비'], ['mood', '분위기'], ['pref', '취향']];
 const subLine = sub => SUBS.filter(([k]) => +sub?.[k]).map(([k, n]) => `${n} ${sub[k]}`).join(' · ');
 // 소수점까지 채워지는 별 5개
 const starBar = x => `<span class="sbar"><span class="bg">★★★★★</span><span class="fg" style="width:${Math.max(0, Math.min(5, x)) / 5 * 100}%">★★★★★</span></span>`;
@@ -4212,7 +4212,7 @@ async function refreshAll(){
 /* =========================================================
    앱 업데이트 (홈 화면에 깔린 앱이 옛 화면을 붙잡고 있을 때)
    ========================================================= */
-const APP_VERSION = '2026.11.20-2'; // 고칠 때마다 올림
+const APP_VERSION = '2026.11.20-3'; // 고칠 때마다 올림
 // 새 버전 확인: 파일 맨 앞 2KB만 받아서 버전 표시만 읽음 (안 되면 전체를 받아 확인)
 async function latestVersion(){
   try {

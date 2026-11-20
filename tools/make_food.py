@@ -34,7 +34,7 @@ def rep_block(start, end, new):
     s = s[:i] + new + s[j + len(end):]
 
 
-VERSION = '2026.11.20-1'
+VERSION = '2026.11.20-2'
 
 # ---------------------------------------------------------------
 # 1) 같은 주소(pjgon1.github.io)를 쓰는 커피로그와 이 기기 저장 칸이 안 섞이게
@@ -161,9 +161,14 @@ rep_block("  cup: '<svg class=\"ic2\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"
 
 # 색 테마: 맛집로그 기본은 '고추장'
 rep("const THEMES = [\n", "const THEMES = [\n  {k:'gochujang',n:'고추장',    bg:'#FFF9F5',ink:'#3A221C',sub:'#9C7D73',acc:'#C9472D',onacc:'#fff',soft:'#FCE2D9',softt:'#A63A22',note:'#FDF0EA',heart:'#FCE7EA',heartt:'#C2405E',line:'#F4DDD3',frame:'#fff',ph:'#F6CFC1'},\n")
-rep("n:'커피 베이지'", "n:'누룽지'")
-rep("n:'바닐라 크림'", "n:'계란말이'")
-rep("n:'밤 카페 (다크)'", "n:'심야 식당 (다크)'")
+THEME_NAMES = {  # 색은 그대로, 이름만 음식으로
+    '커피 베이지': '누룽지', '말차 라떼': '깻잎', '바닐라 크림': '계란말이', '딸기 우유': '명란', '얼그레이': '메밀',
+    '소다 라떼': '물냉면', '자몽 에이드': '떡볶이', '블루베리 요거트': '가지', '흑임자': '짜장', '밤 카페 (다크)': '심야 식당 (다크)',
+    '호지차 라떼': '된장', '레몬 마들렌': '단무지', '민트 초코': '미나리', '복숭아 아이스티': '연어', '라벤더 라떼': '자색고구마',
+    '카라멜 마키아또': '돈까스', '유자차': '카레', '체리 콕': '김치', '바다 소금빵': '물회', '심야 라운지 (다크)': '포장마차 (다크)',
+}
+for a, b in THEME_NAMES.items():
+    rep(f"n:'{a}'", f"n:'{b}'")
 rep("let cur = 'coffee'; try { cur = LS.getItem('theme') || 'coffee'; }", "let cur = 'gochujang'; try { cur = LS.getItem('theme') || 'gochujang'; }")
 rep("let th = 'coffee'; try { th = LS.getItem('theme') || 'coffee'; }", "let th = 'gochujang'; try { th = LS.getItem('theme') || 'gochujang'; }")
 rep('<meta name="theme-color" content="#FFFDF9">', '<meta name="theme-color" content="#FFF9F5">')

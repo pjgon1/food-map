@@ -34,7 +34,7 @@ def rep_block(start, end, new):
     s = s[:i] + new + s[j + len(end):]
 
 
-VERSION = '2026.11.21-13'
+VERSION = '2026.11.21-14'
 
 # ---------------------------------------------------------------
 # 1) 같은 주소(pjgon1.github.io)를 쓰는 커피로그와 이 기기 저장 칸이 안 섞이게
@@ -291,10 +291,10 @@ const featsOf = c => (c && (Array.isArray(c.feats) ? c.feats : autoFeats(c))) ||
 const hrsOf = c => (c && c.tags || []).filter(t => HOURS.includes(t));
 const tagsOnly = c => (c && c.tags || []).filter(t => !HOURS.includes(t));
 const hrsLine = c => { const h = hrsOf(c); return h.length ? esc(h.join(' · ')) : '<span style="opacity:.55">+ 영업 정보</span>'; };
-// 칩 거르기: 종류는 고른 것 중 하나만 맞으면, 음식 성격·태그는 고른 게 다 맞아야
+// 칩 거르기: 종류·음식 성격은 고른 것 중 하나만 맞으면, 태그는 고른 게 다 맞아야
 const passTags = (c, sel) => {
   const a = [...sel], ks = a.filter(t => KINDS.includes(t));
-  return (!ks.length || ks.some(k => kindsOf(c).includes(k))) && a.filter(t => FEATS.includes(t)).every(t => featsOf(c).includes(t))
+  return (!ks.length || ks.some(k => kindsOf(c).includes(k))) && (fs => !fs.length || fs.some(t => featsOf(c).includes(t)))(a.filter(t => FEATS.includes(t)))
     && a.filter(t => !KINDS.includes(t) && !FEATS.includes(t)).every(t => (c.tags || []).includes(t));
 };
 """
@@ -363,7 +363,7 @@ rep("shOpt.photo = false;\n  const used = [...new Set(cafes.flatMap(c => c.tags|
     "shOpt.photo = false;\n  const used = [...KINDS.filter(k => cafes.some(c => kindsOf(c).includes(k))), ...FEATS.filter(f => cafes.some(c => featsOf(c).includes(f))), ...new Set(cafes.flatMap(c => c.tags||[]))];")
 rep("""${used.length ? `<label class="f">이런 곳이면 좋겠어""",
     """${usedK.length ? `<label class="f">뭐 먹을까? (여러 개 고르면 그중 하나)</label><div class="tagpick">${usedK.map(t => `<button class="chip ${pickOpt.tags.includes(t)?'on':''}" data-tg="${esc(t)}">${esc(t)}</button>`).join('')}</div>` : ''}
-    ${usedF.length ? `<label class="f">땡기는 거 (여러 개 고르면 다 맞는 곳만)</label><div class="tagpick">${usedF.map(t => `<button class="chip ${pickOpt.tags.includes(t)?'on':''}" data-tg="${esc(t)}">${esc(t)}</button>`).join('')}</div>` : ''}
+    ${usedF.length ? `<label class="f">땡기는 거 (여러 개 고르면 그중 하나)</label><div class="tagpick">${usedF.map(t => `<button class="chip ${pickOpt.tags.includes(t)?'on':''}" data-tg="${esc(t)}">${esc(t)}</button>`).join('')}</div>` : ''}
     ${used.length ? `<label class="f">이런 곳이면 좋겠어""")
 rep("if (pickOpt.tags.some(t => !(c.tags||[]).includes(t))) return false;", "if (!passTags(c, pickOpt.tags)) return false;")
 rep("if (pickOpt.tags.some(t => !(c.tags || []).includes(t))) continue;", "if (!passTags(c, pickOpt.tags)) continue;")

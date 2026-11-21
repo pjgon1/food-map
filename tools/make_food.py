@@ -34,7 +34,7 @@ def rep_block(start, end, new):
     s = s[:i] + new + s[j + len(end):]
 
 
-VERSION = '2026.11.21-12'
+VERSION = '2026.11.21-13'
 
 # ---------------------------------------------------------------
 # 1) 같은 주소(pjgon1.github.io)를 쓰는 커피로그와 이 기기 저장 칸이 안 섞이게
@@ -104,8 +104,9 @@ rep("const rank = p => p.category_group_code === 'CE7' || /카페|커피|디저�
 # ---------------------------------------------------------------
 rep_block("const TAGS = [", "];",
           "const TAGS = ['혼밥 가능','빠르게 먹기 좋음','가성비','양 많음','무한리필·뷔페','데이트','특별한 날','모임·회식','룸 있음','분위기 좋음','뷰 좋음','야외 좌석','조용함','친절함','술 한잔',"
-          "'브레이크타임 없음','아침식사 가능','심야 영업','배달 가능','포장 가능','테이크아웃 전문','예약 추천','웨이팅 있음','주차 가능'];\n"
-          "const TAGS_OPS = ['브레이크타임 없음','아침식사 가능','심야 영업','배달 가능','포장 가능','테이크아웃 전문','예약 추천','웨이팅 있음','주차 가능']; // 영업·이용 칸")
+          "'포장 가능','예약 추천','웨이팅 있음','주차 가능','브레이크타임 없음','아침식사 가능','심야 영업','배달 가능','테이크아웃 전문'];\n"
+          "const TAGS_OPS = ['포장 가능','예약 추천','웨이팅 있음','주차 가능']; // 이용 칸\n"
+          "const HOURS = ['브레이크타임 없음','아침식사 가능','심야 영업','배달 가능','테이크아웃 전문']; // 영업 정보: 상세 화면 주소 밑에 작은 글씨로 (태그로 저장해서 거르기는 그대로)")
 rep("const SUBS = [['taste', '맛'], ['mood', '분위기'], ['seat', '자리'], ['pref', '취향']];",
     "const SUBS = [['taste', '맛'], ['value', '가성비'], ['mood', '분위기'], ['pref', '취향']];")
 MENU = r"""const MENU_GROUPS = [
@@ -286,6 +287,10 @@ const autoFeats = c => {
   return FEATS.filter(f => fs.includes(f));
 };
 const featsOf = c => (c && (Array.isArray(c.feats) ? c.feats : autoFeats(c))) || [];
+// 영업 정보(HOURS)는 태그 칩에서 빼고 주소 밑 한 줄로
+const hrsOf = c => (c && c.tags || []).filter(t => HOURS.includes(t));
+const tagsOnly = c => (c && c.tags || []).filter(t => !HOURS.includes(t));
+const hrsLine = c => { const h = hrsOf(c); return h.length ? esc(h.join(' · ')) : '<span style="opacity:.55">+ 영업 정보</span>'; };
 // 칩 거르기: 종류는 고른 것 중 하나만 맞으면, 음식 성격·태그는 고른 게 다 맞아야
 const passTags = (c, sel) => {
   const a = [...sel], ks = a.filter(t => KINDS.includes(t));
@@ -316,7 +321,7 @@ rep("const passList = c => ", "$('#listChips2').onclick = e => $('#listChips').o
 rep("...(c.tags||[]), ...visitsOf(c.id)", "...(c.tags||[]), ...kindsOf(c), ...featsOf(c), ...visitsOf(c.id)")
 rep("""">${c.closed?'<span class="tag closedt">'""", """">${kindsOf(c).map(k => '<span class="tag kind">'+esc(k)+'</span>').join('')}${featsOf(c).map(f => '<span class="tag feat">'+esc(f)+'</span>').join('')}${c.closed?'<span class="tag closedt">'""", 3)
 rep(".tag.wish{background:transparent;color:var(--sub);border:1px dashed var(--sub)}",
-    ".tag.wish{background:transparent;color:var(--sub);border:1px dashed var(--sub)}\n.tag.kind{background:var(--acc);color:var(--onacc);font-weight:600}\n.tag.feat{background:transparent;color:var(--softt);box-shadow:inset 0 0 0 1.3px var(--soft)}")
+    ".tag.wish{background:transparent;color:var(--sub);border:1px dashed var(--sub)}\n.tag.kind{background:var(--acc);color:var(--onacc);font-weight:600}\n.tag.feat{background:transparent;color:var(--softt);box-shadow:inset 0 0 0 1.3px var(--soft)}\n.hrsline{cursor:pointer}")
 # 식당 정보 편집: '어떤 곳이에요?' 맨 위에 종류 고르기
 rep('<label class="f">어떤 곳이에요?</label>', '<label class="f">어떤 곳이에요? <span class="small" style="font-weight:400">(줄마다 여러 개 골라도 돼요)</span></label>')
 rep("""<div class="tagpick" id="cTags">""",
@@ -325,12 +330,31 @@ rep("""<div class="tagpick" id="cTags">""",
     <div class="tagpick" id="cFeat" style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed var(--line)">${FEATS.map(f => `<button class="chip ${featsOf(c).includes(f)?'on':''}" data-f="${f}">${f}</button>`).join('')}</div>
     <div class="small" style="margin:0 2px 6px">분위기·상황</div>
     <div class="tagpick" id="cTags">""")
+# 태그 칩에서 영업 정보 빼기
+rep("(c.tags||[]).map(t=>`<span class=\"tag\">${esc(t)}</span>`)", "tagsOnly(c).map(t=>`<span class=\"tag\">${esc(t)}</span>`)", 2)
+rep("(c.tags||[]).map(t => `<span class=\"tag\">${esc(t)}</span>`)", "tagsOnly(c).map(t => `<span class=\"tag\">${esc(t)}</span>`)", 2)
+# 주소 밑 작은 글씨로 영업 정보 (핀 시트, 공유 화면, 오늘 어디 갈까)
+rep("· 방문 기록 ${st.count}개</div></div>", "· 방문 기록 ${st.count}개</div>${hrsOf(c).length ? '<div class=\"subt\">' + esc(hrsOf(c).join(' · ')) + '</div>' : ''}</div>")
+rep("${c.category ? ' · ' + esc(c.category.split(' > ').pop()) : ''}</div></div>", "${c.category ? ' · ' + esc(c.category.split(' > ').pop()) : ''}</div>${hrsOf(c).length ? '<div class=\"subt\">' + esc(hrsOf(c).join(' · ')) + '</div>' : ''}</div>", 2)
+rep("${st.rating ? ' · ★ ' + st.rating.toFixed(1) : ''}</div>", "${st.rating ? ' · ★ ' + st.rating.toFixed(1) : ''}</div>${hrsOf(c).length ? '<div class=\"subt\">' + esc(hrsOf(c).join(' · ')) + '</div>' : ''}")
+# 상세 화면: 분류·전화 줄 바로 밑에 영업 정보, 누르면 바로 고르기
+rep("${c.category?`<div class=\"subt\">${esc(c.category.split(' > ').slice(-2).join(' · '))}${c.phone?' · '+esc(c.phone):''}</div>`:''}</div>",
+    "${c.category?`<div class=\"subt\">${esc(c.category.split(' > ').slice(-2).join(' · '))}${c.phone?' · '+esc(c.phone):''}</div>`:''}<div class=\"subt hrsline\" id=\"dHrs\">${hrsLine(c)}</div></div>")
+rep("\n    <div class=\"myrate\">", "\n    <div class=\"tagpick hidden\" id=\"dHrsPick\" style=\"margin-top:10px\">${HOURS.map(t => `<button class=\"chip ${hrsOf(c).includes(t)?'on':''}\" data-h=\"${esc(t)}\" style=\"font-size:12px;padding:5px 10px\">${esc(t)}</button>`).join('')}</div>\n    <div class=\"myrate\">")
+rep("  $('#dSub').onclick = async e => {", """  $('#dHrs').onclick = () => $('#dHrsPick').classList.toggle('hidden');
+  $('#dHrsPick').onclick = async e => {
+    const b = e.target.closest('.chip'); if (!b) return; const h = b.dataset.h;
+    const cc = await patchRec('cafes', id, x => { const s = new Set(x.tags || []); s.has(h) ? s.delete(h) : s.add(h); x.tags = [...TAGS.filter(k => s.has(k)), ...[...s].filter(k => !TAGS.includes(k))]; }); if (!cc) return;
+    b.classList.toggle('on', (cc.tags || []).includes(h)); $('#dHrs').innerHTML = hrsLine(cc);
+    Sync.soon(); refreshAll();
+  };
+  $('#dSub').onclick = async e => {""")
 rep("""<div class="tagpick" id="cTags">${TAGS.map(t => `<button class="chip ${c.tags.includes(t)?'on':''}" data-t="${esc(t)}">${esc(t)}</button>`).join('')}</div>""",
-    """<div class="tagpick" id="cTags">${TAGS.filter(t => !TAGS_OPS.includes(t)).map(t => `<button class="chip ${c.tags.includes(t)?'on':''}" data-t="${esc(t)}">${esc(t)}</button>`).join('')}<div class="small" style="flex-basis:100%;margin:6px 2px 0;padding-top:10px;border-top:1px dashed var(--line)">영업·이용</div>${TAGS_OPS.map(t => `<button class="chip ${c.tags.includes(t)?'on':''}" data-t="${esc(t)}">${esc(t)}</button>`).join('')}</div>""")
+    """<div class="tagpick" id="cTags">${TAGS.filter(t => !TAGS_OPS.includes(t) && !HOURS.includes(t)).map(t => `<button class="chip ${c.tags.includes(t)?'on':''}" data-t="${esc(t)}">${esc(t)}</button>`).join('')}<div class="small" style="flex-basis:100%;margin:6px 2px 0;padding-top:10px;border-top:1px dashed var(--line)">이용</div>${TAGS_OPS.map(t => `<button class="chip ${c.tags.includes(t)?'on':''}" data-t="${esc(t)}">${esc(t)}</button>`).join('')}</div>""")
 rep("$('#cTags').onclick = e => { const b = e.target.closest('.chip'); if (b) b.classList.toggle('on'); };",
     "$('#cTags').onclick = e => { const b = e.target.closest('.chip'); if (b) b.classList.toggle('on'); };\n  $('#cKind').onclick = e => { const b = e.target.closest('.chip'); if (!b) return; b.classList.toggle('on');\n    // 음식 성격을 직접 안 건드렸으면 바뀐 종류에 맞춰 자동값을 다시 보여줌 (술집 → 안주)\n    if (!$('#cFeat').dataset.touched && !Array.isArray(c.feats)) { const ks = [...document.querySelectorAll('#cKind .chip.on')].map(x => x.dataset.k), au = autoFeats({ ...c, kind: ks.length ? ks : undefined }); document.querySelectorAll('#cFeat .chip').forEach(x => x.classList.toggle('on', au.includes(x.dataset.f))); } };\n  $('#cFeat').onclick = e => { const b = e.target.closest('.chip'); if (b) { b.classList.toggle('on'); e.currentTarget.dataset.touched = '1'; } };")
 rep("c.tags = [...document.querySelectorAll('#cTags .chip.on')].map(b => b.dataset.t);",
-    "c.tags = [...document.querySelectorAll('#cTags .chip.on')].map(b => b.dataset.t);\n  { const ks = [...document.querySelectorAll('#cKind .chip.on')].map(b => b.dataset.k); if (ks.length) c.kind = ks.length === 1 ? ks[0] : ks; else delete c.kind; }\n  if ($('#cFeat').dataset.touched) { const fs = [...document.querySelectorAll('#cFeat .chip.on')].map(b => b.dataset.f), au = (delete c.feats, autoFeats(c)); if (fs.length !== au.length || fs.some(f => !au.includes(f))) c.feats = fs; }")
+    "c.tags = [...[...document.querySelectorAll('#cTags .chip.on')].map(b => b.dataset.t), ...hrsOf(c)];\n  { const ks = [...document.querySelectorAll('#cKind .chip.on')].map(b => b.dataset.k); if (ks.length) c.kind = ks.length === 1 ? ks[0] : ks; else delete c.kind; }\n  if ($('#cFeat').dataset.touched) { const fs = [...document.querySelectorAll('#cFeat .chip.on')].map(b => b.dataset.f), au = (delete c.feats, autoFeats(c)); if (fs.length !== au.length || fs.some(f => !au.includes(f))) c.feats = fs; }")
 # 오늘 어디 갈까: '뭐 먹을까?' 줄
 rep("function openPick(){\n  const used = [...new Set(cafes.flatMap(c => c.tags||[]))];",
     "function openPick(){\n  const used = [...new Set(cafes.flatMap(c => c.tags||[]))], usedK = KINDS.filter(k => cafes.some(c => kindsOf(c).includes(k))), usedF = FEATS.filter(f => cafes.some(c => featsOf(c).includes(f)));")

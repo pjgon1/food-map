@@ -34,7 +34,7 @@ def rep_block(start, end, new):
     s = s[:i] + new + s[j + len(end):]
 
 
-VERSION = '2026.11.21-14'
+VERSION = '2026.11.21-15'
 
 # ---------------------------------------------------------------
 # 1) 같은 주소(pjgon1.github.io)를 쓰는 커피로그와 이 기기 저장 칸이 안 섞이게
@@ -145,7 +145,26 @@ rep_block("const MENU_GROUPS = [", "];\n", MENU + "\n")
 rep('placeholder="아인슈페너, 크로플, 소금빵…"', 'placeholder="김치찌개, 돈까스, 냉면…"')
 rep('placeholder="아인슈페너, 바스크치즈케이크"', 'placeholder="김치찌개, 계란말이"')
 rep('placeholder="바스크치즈케이크, 시즌 라떼…"', 'placeholder="수육, 계절 메뉴…"')
-rep('placeholder="맛, 분위기, 자리, 웨이팅… 생각나는 대로"', 'placeholder="맛, 양, 서비스, 웨이팅… 생각나는 대로"')
+rep('placeholder="맛, 분위기, 자리, 웨이팅… 생각나는 대로"', 'placeholder="맛, 양, 웨이팅, 분위기… 생각나는 대로"')
+rep('메모 (와이파이 비번, 주차 팁 같은 거)', '메모 (주차 팁, 추천 자리 같은 거)')
+# 방문 기록: 몇 명이서 → 1인 가격
+rep("""placeholder="13,500">""", """placeholder="13,500">
+    <div class="tagpick" id="vPpl" style="margin-top:8px;align-items:center"><span class="small" style="margin-right:2px">몇 명이서?</span>${[1,2,3,4,5,6].map(n => `<button type="button" class="chip ${(+v.people||0)===n?'on':''}" data-n="${n}" style="font-size:12px;padding:5px 10px">${n===6?'6명+':n+'명'}</button>`).join('')}</div>
+    <div class="small" id="vPer" style="margin:6px 2px 0"></div>""")
+rep("  $('#vPrice').oninput = e => { const n = e.target.value.replace(/[^\\d]/g,''); e.target.value = n ? Number(n).toLocaleString('ko-KR') : ''; };",
+    """  const perShow = () => { const pr = +$('#vPrice').value.replace(/[^\\d]/g,''), b = document.querySelector('#vPpl .chip.on'), n = b ? +b.dataset.n : 0; $('#vPer').textContent = pr && n > 1 ? `1인 ${won(Math.round(pr / n / 100) * 100)}` : pr && !n ? '인원을 고르면 1인 가격이 나와요' : ''; };
+  $('#vPrice').oninput = e => { const n = e.target.value.replace(/[^\\d]/g,''); e.target.value = n ? Number(n).toLocaleString('ko-KR') : ''; perShow(); };
+  $('#vPpl').onclick = e => { const b = e.target.closest('.chip'); if (!b) return; const on = !b.classList.contains('on'); document.querySelectorAll('#vPpl .chip').forEach(x => x.classList.remove('on')); b.classList.toggle('on', on); perShow(); };
+  perShow();""")
+rep("  v.price = $('#vPrice').value.replace(/[^\\d]/g,'');",
+    "  v.price = $('#vPrice').value.replace(/[^\\d]/g,'');\n  { const b = document.querySelector('#vPpl .chip.on'); if (b) v.people = +b.dataset.n; else delete v.people; }")
+rep("${esc(v.menu)}${v.menu&&v.price?' · ':''}${won(v.price)}", "${esc(v.menu)}${v.menu&&v.price?' · ':''}${won(v.price)}${v.price && +v.people > 1 ? ` (${v.people >= 6 ? '6명+' : v.people + '명'} · 1인 ${won(Math.round(v.price / v.people / 100) * 100)})` : ''}")
+# 오늘 어디 갈까: 1인 얼마까지
+rep("    <div class=\"tagpick\">${chips([[0,'상관없음'],[0.5,'500m'],[1,'1km'],[3,'3km'],[10,'10km']], pickOpt.dist, 'ds')}</div>",
+    "    <div class=\"tagpick\">${chips([[0,'상관없음'],[0.5,'500m'],[1,'1km'],[3,'3km'],[10,'10km']], pickOpt.dist, 'ds')}</div>\n    <label class=\"f\">1인 얼마까지? <span class=\"small\" style=\"font-weight:400\">(인원 적은 기록이 있는 곳만)</span></label>\n    <div class=\"tagpick\">${chips([[0,'상관없음'],[10000,'1만원'],[20000,'2만원'],[30000,'3만원']], pickOpt.price || 0, 'pr')}</div>")
+rep("    if (ds) { pickOpt.dist = +ds.dataset.ds;", "    { const pr = e.target.closest('[data-pr]'); if (pr) { pickOpt.price = +pr.dataset.pr; pr.parentElement.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === pr)); } }\n    if (ds) { pickOpt.dist = +ds.dataset.ds;")
+rep("    if (pickOpt.dist && distKm(myPos, c) > pickOpt.dist) return false;", "    if (pickOpt.dist && distKm(myPos, c) > pickOpt.dist) return false;\n    if (pickOpt.price && !(perPerson(c) && perPerson(c) <= pickOpt.price)) return false;")
+rep("        if (pickOpt.dist && distKm(myPos, c) > pickOpt.dist) continue;", "        if (pickOpt.dist && distKm(myPos, c) > pickOpt.dist) continue;\n        if (pickOpt.price) continue; // 친구 식당은 1인 가격을 몰라서 뺌")
 rep("prompt('새 종류 이름 (예: 시즌 음료)')", "prompt('새 종류 이름 (예: 계절 메뉴)')")
 rep('placeholder="예: 재곤, jaegon_cafe"', 'placeholder="예: 재곤, jaegon_food"')
 rep('예: 모모커피 성수, 동성로 카페', '예: 동성로 돈까스, 수성못 파스타')
@@ -212,7 +231,7 @@ const ART_KEYS = [
 const artPool = c => {
   if (!c) return null;
   const find = s => { for (const [re, a] of ART_KEYS) if (re.test(s)) return a; return null; };
-  return find(c.name || '') || find((c.category || '').split(' > ').slice(1).join(' ')); // 이름이 먼저, 모르면 카카오 분류
+  return find(c.name || '') || find(menusOf(c)) || find((c.category || '').split(' > ').slice(1).join(' ')); // 이름 → 기록한 메뉴 → 카카오 분류
 };"""
 rep("})();\nconst coverOf = ", "})();\n" + KIND_ARTS + "\n" + ART_KEYS + "\nconst coverOf = ")
 rep("function cupIcon(id){", "function cupIcon(id, c){")
@@ -258,12 +277,16 @@ const autoKind = cat => {
 // 여러 개 고를 수 있음 (예전 기록은 글자 하나로 저장돼 있음)
 const kindsOf = c => { if (!c) return []; const k = c.kind; if (Array.isArray(k)) return k; if (k) return [k]; const a = autoKind(c.category); return a ? [a] : []; };
 const kindOf = c => kindsOf(c)[0] || '';
+// 내 방문 기록에 적은 메뉴들 (친구 식당은 없음)
+const menusOf = c => (c && c.id && typeof visits !== 'undefined') ? visits.filter(v => v.cafeId === c.id && v.menu).map(v => v.menu).join(' ') : '';
+// 1인 가격: 인원을 적은 방문들의 (쓴 돈 ÷ 인원) 평균, 백 원 단위
+const perPerson = c => { if (!c || !c.id || typeof visits === 'undefined') return 0; const a = visits.filter(v => v.cafeId === c.id && +v.price > 0 && +v.people > 0).map(v => v.price / v.people); return a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length / 100) * 100 : 0; };
 // 음식 성격: 종류와 따로 겹쳐서 붙음 (막국수 = 한식 + 면, 라볶이 = 분식 + 면 + 매운거)
 // 식당 정보에서 고른 값 → 없으면 이름·카카오 분류로 자동
 const FEATS = ['고기', '해산물', '채소', '면', '밥', '빵', '국물', '구이', '찜', '튀김', '날것', '매운거', '안주', '디저트'];
 const FEAT_KEYS = {
   '고기': /고기|육류|삼겹|목살|항정|갈비|불고기|한우|등심|차돌|곱창|막창|대창|족발|보쌈|제육|스테이크|바베큐|숯불|정육|오리|양꼬치|닭갈비|육회|바비큐|바베큐|립|동파육|수육|닭한마리|찜닭|야키토리/,
-  '해산물': /해물|해산물|횟집|회센터|회타운|회식당|(^|\s)회($|\s)|활어|물회|사시미|초밥|스시|오마카세|수산|생선|조개|대게|킹크랩|꽃게|게장|크랩|랍스터|새우|오징어|낙지|쭈꾸미|주꾸미|문어|아귀|아구찜|장어|고등어|갈치|전복|굴국|굴보쌈|매운탕|포케|알탕|꼬막|감바스|봉골레|똠얌|똠양|뿌팟퐁|피시앤칩스|피쉬앤칩스/,
+  '해산물': /해물|해산물|횟집|회센터|회타운|회식당|(^|\s)회($|\s)|활어|물회|사시미|초밥|스시|오마카세|수산|생선|조개|대게|킹크랩|꽃게|게장|크랩|랍스터|새우|오징어|낙지|쭈꾸미|주꾸미|문어|아귀|아구찜|장어|고등어|갈치|전복|굴국|굴보쌈|매운탕|포케|연어|참치|광어|우럭|방어|알탕|꼬막|감바스|봉골레|똠얌|똠양|뿌팟퐁|피시앤칩스|피쉬앤칩스/,
   '면': /국수|냉면|밀면|쫄면|라면|라멘|우동|소바|메밀|파스타|스파게티|짜장|짬뽕|팟타이|분짜|라볶이|비빔면|중국요리|중화요리|반점|까르보나라|봉골레|알리오|야키소바|미고렝|미고랭|락사/,
   '밥': /밥|백반|한정식|정식|도시락|돈부리|규동|카레|(^|[^이])커리|오므라이스|리조또|리소토|포케|기사식당|가정식|나시고렝|나시고랭|오차즈케|(^|\s)죽($|\s)|죽집|본죽|전복죽|가츠동|규동/,
   '국물': /국밥|해장국|순댓국|순대국|미역국|찌개|전골|탕(?!수|후)|육개장|칼국수|잔치국수|쌀국수|라멘|우동|짬뽕|샤브|훠궈|수제비|청국장|닭한마리|나베|똠얌|똠양|락사|바쿠테|수프|스프/,
@@ -280,8 +303,8 @@ const FEAT_KEYS = {
 const autoFeats = c => {
   if (!c) return [];
   const hit = s => FEATS.filter(f => FEAT_KEYS[f].test(s));
-  const fn = hit(c.name || ''), fc = hit(String(c.category || '').split('>').map(x => x.trim()).filter(x => x && x !== '음식점').join(' '));
-  // 이름에서 찾은 게 있으면 그걸 쓰고 카카오 분류에서는 재료(고기·해산물·채소)만 보탬. 이름으로 모르면 분류를 다 씀
+  const fn = [...new Set([...hit(c.name || ''), ...hit(menusOf(c))])], fc = hit(String(c.category || '').split('>').map(x => x.trim()).filter(x => x && x !== '음식점').join(' '));
+  // 이름·기록한 메뉴에서 찾은 게 있으면 그걸 쓰고 카카오 분류에서는 재료(고기·해산물·채소)만 보탬. 그걸로 모르면 분류를 다 씀
   const fs = fn.length ? [...fn, ...fc.filter(f => ['고기', '해산물', '채소'].includes(f))] : fc;
   if (kindsOf(c).includes('술집')) fs.push('안주');
   return FEATS.filter(f => fs.includes(f));
@@ -319,7 +342,7 @@ rep("  $('#listChips').innerHTML = tags.map(t => `<button class=\"chip ${on(t)?'
     "  $('#listChips').innerHTML = tags.map(t => `<button class=\"chip ${on(t)?'on':''}\" data-t=\"${esc(t)}\" style=\"font-size:12px;padding:5px 10px\">${esc(t)}</button>`).join('');\n  $('#listChips2').innerHTML = tags2.map(t => `<button class=\"chip ${on(t)?'on':''}\" data-t=\"${esc(t)}\" style=\"font-size:12px;padding:5px 10px\">${esc(t)}</button>`).join('');\n  $('#listChips2').classList.toggle('hidden', !tags2.length);")
 rep("const passList = c => ", "$('#listChips2').onclick = e => $('#listChips').onclick(e);\nconst passList = c => ")
 rep("...(c.tags||[]), ...visitsOf(c.id)", "...(c.tags||[]), ...kindsOf(c), ...featsOf(c), ...visitsOf(c.id)")
-rep("""">${c.closed?'<span class="tag closedt">'""", """">${kindsOf(c).map(k => '<span class="tag kind">'+esc(k)+'</span>').join('')}${featsOf(c).map(f => '<span class="tag feat">'+esc(f)+'</span>').join('')}${c.closed?'<span class="tag closedt">'""", 3)
+rep("""">${c.closed?'<span class="tag closedt">'""", """">${kindsOf(c).map(k => '<span class="tag kind">'+esc(k)+'</span>').join('')}${featsOf(c).map(f => '<span class="tag feat">'+esc(f)+'</span>').join('')}${perPerson(c) ? '<span class="tag feat">1인 '+won(perPerson(c))+'</span>' : ''}${c.closed?'<span class="tag closedt">'""", 3)
 rep(".tag.wish{background:transparent;color:var(--sub);border:1px dashed var(--sub)}",
     ".tag.wish{background:transparent;color:var(--sub);border:1px dashed var(--sub)}\n.tag.kind{background:var(--acc);color:var(--onacc);font-weight:600}\n.tag.feat{background:transparent;color:var(--softt);box-shadow:inset 0 0 0 1.3px var(--soft)}\n.hrsline{cursor:pointer}")
 # 식당 정보 편집: '어떤 곳이에요?' 맨 위에 종류 고르기

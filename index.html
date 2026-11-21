@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="app-version" content="2026.11.21-14">
+<meta name="app-version" content="2026.11.21-15">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#FFF9F5">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,7 +13,7 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <!-- 보안: 아래 script-src 의 sha256 두 개는 이 파일 안 인라인 스크립트 두 덩어리의 해시. 스크립트를 고치면 해시도 다시 계산해서 바꿔야 앱이 열림 -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IPTHRSGmeYrNSOO3QK4KY36tTY/VnE+Mx7/hZB8FcZs=' 'sha256-q90qf6WnXSWAVd/JRwdg773rGm2sZz3LDtVkcLISYgM=' https://dapi.kakao.com https://*.kakaocdn.net https://*.daumcdn.net https://cdn.jsdelivr.net; connect-src 'self' https://wqzndhwuylzpgauoldpv.supabase.co wss://wqzndhwuylzpgauoldpv.supabase.co https://*.kakao.com https://*.kakaocdn.net https://*.daum.net https://*.daumcdn.net https://api.open-meteo.com https://archive-api.open-meteo.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self'; manifest-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IPTHRSGmeYrNSOO3QK4KY36tTY/VnE+Mx7/hZB8FcZs=' 'sha256-gvONjSGQvf+Rbk7IAWHZF8PkXgSZrbDiFwFKqsSQ/1A=' https://dapi.kakao.com https://*.kakaocdn.net https://*.daumcdn.net https://cdn.jsdelivr.net; connect-src 'self' https://wqzndhwuylzpgauoldpv.supabase.co wss://wqzndhwuylzpgauoldpv.supabase.co https://*.kakao.com https://*.kakaocdn.net https://*.daum.net https://*.daumcdn.net https://api.open-meteo.com https://archive-api.open-meteo.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; worker-src 'self'; manifest-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <title>맛집로그</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -750,12 +750,16 @@ const autoKind = cat => {
 // 여러 개 고를 수 있음 (예전 기록은 글자 하나로 저장돼 있음)
 const kindsOf = c => { if (!c) return []; const k = c.kind; if (Array.isArray(k)) return k; if (k) return [k]; const a = autoKind(c.category); return a ? [a] : []; };
 const kindOf = c => kindsOf(c)[0] || '';
+// 내 방문 기록에 적은 메뉴들 (친구 식당은 없음)
+const menusOf = c => (c && c.id && typeof visits !== 'undefined') ? visits.filter(v => v.cafeId === c.id && v.menu).map(v => v.menu).join(' ') : '';
+// 1인 가격: 인원을 적은 방문들의 (쓴 돈 ÷ 인원) 평균, 백 원 단위
+const perPerson = c => { if (!c || !c.id || typeof visits === 'undefined') return 0; const a = visits.filter(v => v.cafeId === c.id && +v.price > 0 && +v.people > 0).map(v => v.price / v.people); return a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length / 100) * 100 : 0; };
 // 음식 성격: 종류와 따로 겹쳐서 붙음 (막국수 = 한식 + 면, 라볶이 = 분식 + 면 + 매운거)
 // 식당 정보에서 고른 값 → 없으면 이름·카카오 분류로 자동
 const FEATS = ['고기', '해산물', '채소', '면', '밥', '빵', '국물', '구이', '찜', '튀김', '날것', '매운거', '안주', '디저트'];
 const FEAT_KEYS = {
   '고기': /고기|육류|삼겹|목살|항정|갈비|불고기|한우|등심|차돌|곱창|막창|대창|족발|보쌈|제육|스테이크|바베큐|숯불|정육|오리|양꼬치|닭갈비|육회|바비큐|바베큐|립|동파육|수육|닭한마리|찜닭|야키토리/,
-  '해산물': /해물|해산물|횟집|회센터|회타운|회식당|(^|\s)회($|\s)|활어|물회|사시미|초밥|스시|오마카세|수산|생선|조개|대게|킹크랩|꽃게|게장|크랩|랍스터|새우|오징어|낙지|쭈꾸미|주꾸미|문어|아귀|아구찜|장어|고등어|갈치|전복|굴국|굴보쌈|매운탕|포케|알탕|꼬막|감바스|봉골레|똠얌|똠양|뿌팟퐁|피시앤칩스|피쉬앤칩스/,
+  '해산물': /해물|해산물|횟집|회센터|회타운|회식당|(^|\s)회($|\s)|활어|물회|사시미|초밥|스시|오마카세|수산|생선|조개|대게|킹크랩|꽃게|게장|크랩|랍스터|새우|오징어|낙지|쭈꾸미|주꾸미|문어|아귀|아구찜|장어|고등어|갈치|전복|굴국|굴보쌈|매운탕|포케|연어|참치|광어|우럭|방어|알탕|꼬막|감바스|봉골레|똠얌|똠양|뿌팟퐁|피시앤칩스|피쉬앤칩스/,
   '면': /국수|냉면|밀면|쫄면|라면|라멘|우동|소바|메밀|파스타|스파게티|짜장|짬뽕|팟타이|분짜|라볶이|비빔면|중국요리|중화요리|반점|까르보나라|봉골레|알리오|야키소바|미고렝|미고랭|락사/,
   '밥': /밥|백반|한정식|정식|도시락|돈부리|규동|카레|(^|[^이])커리|오므라이스|리조또|리소토|포케|기사식당|가정식|나시고렝|나시고랭|오차즈케|(^|\s)죽($|\s)|죽집|본죽|전복죽|가츠동|규동/,
   '국물': /국밥|해장국|순댓국|순대국|미역국|찌개|전골|탕(?!수|후)|육개장|칼국수|잔치국수|쌀국수|라멘|우동|짬뽕|샤브|훠궈|수제비|청국장|닭한마리|나베|똠얌|똠양|락사|바쿠테|수프|스프/,
@@ -772,8 +776,8 @@ const FEAT_KEYS = {
 const autoFeats = c => {
   if (!c) return [];
   const hit = s => FEATS.filter(f => FEAT_KEYS[f].test(s));
-  const fn = hit(c.name || ''), fc = hit(String(c.category || '').split('>').map(x => x.trim()).filter(x => x && x !== '음식점').join(' '));
-  // 이름에서 찾은 게 있으면 그걸 쓰고 카카오 분류에서는 재료(고기·해산물·채소)만 보탬. 이름으로 모르면 분류를 다 씀
+  const fn = [...new Set([...hit(c.name || ''), ...hit(menusOf(c))])], fc = hit(String(c.category || '').split('>').map(x => x.trim()).filter(x => x && x !== '음식점').join(' '));
+  // 이름·기록한 메뉴에서 찾은 게 있으면 그걸 쓰고 카카오 분류에서는 재료(고기·해산물·채소)만 보탬. 그걸로 모르면 분류를 다 씀
   const fs = fn.length ? [...fn, ...fc.filter(f => ['고기', '해산물', '채소'].includes(f))] : fc;
   if (kindsOf(c).includes('술집')) fs.push('안주');
   return FEATS.filter(f => fs.includes(f));
@@ -1094,7 +1098,7 @@ const ART_KEYS = [
 const artPool = c => {
   if (!c) return null;
   const find = s => { for (const [re, a] of ART_KEYS) if (re.test(s)) return a; return null; };
-  return find(c.name || '') || find((c.category || '').split(' > ').slice(1).join(' ')); // 이름이 먼저, 모르면 카카오 분류
+  return find(c.name || '') || find(menusOf(c)) || find((c.category || '').split(' > ').slice(1).join(' ')); // 이름 → 기록한 메뉴 → 카카오 분류
 };
 const coverOf = (c, st) => (st || cafeStats(c)).photos.includes(c.coverPhotoId) ? c.coverPhotoId : (st || cafeStats(c)).photos[0];
 const cupDay = () => Math.floor((Date.now() + 9 * 3600e3) / 86400e3);
@@ -1467,7 +1471,7 @@ async function openSheet(id){
       ${st.rating || subLine(c.sub) ? `<button class="score tap" data-subtog="1">★ ${st.rating ? st.rating.toFixed(1) : '-'} <span class="caret">›</span></button>` : ''}
     </div>
     ${subPanelHTML(st.rating, c, st.my ? '내 별점' : '평균')}
-    <div style="margin-top:10px">${kindsOf(c).map(k => '<span class="tag kind">'+esc(k)+'</span>').join('')}${featsOf(c).map(f => '<span class="tag feat">'+esc(f)+'</span>').join('')}${c.closed?'<span class="tag closedt">'+IC.door+' 문 닫음</span>':''}${c.wish?'<span class="tag wish">가볼래 ☆</span>':''}${c.fav?'<span class="tag heart">또 갈래 ♥</span>':''}${c.hideFriends?'<span class="tag">'+IC.lock+' 친구에게 숨김</span>':''}${tagsOnly(c).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
+    <div style="margin-top:10px">${kindsOf(c).map(k => '<span class="tag kind">'+esc(k)+'</span>').join('')}${featsOf(c).map(f => '<span class="tag feat">'+esc(f)+'</span>').join('')}${perPerson(c) ? '<span class="tag feat">1인 '+won(perPerson(c))+'</span>' : ''}${c.closed?'<span class="tag closedt">'+IC.door+' 문 닫음</span>':''}${c.wish?'<span class="tag wish">가볼래 ☆</span>':''}${c.fav?'<span class="tag heart">또 갈래 ♥</span>':''}${c.hideFriends?'<span class="tag">'+IC.lock+' 친구에게 숨김</span>':''}${tagsOnly(c).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
     ${c.closed ? `<button class="chip movebtn" data-move="${esc(c.id)}">${IC.building} 이사 갔어요 · 새 위치로 기록 옮기기</button>` : ''}
     ${c.nextTry ? `<div class="nextbar">${IC.cake} 다음엔 이거 · ${esc(c.nextTry)}</div>` : ''}
     <div class="btnrow">
@@ -1596,7 +1600,7 @@ let qTimer; qEl.addEventListener('input', () => { clearTimeout(qTimer); if (qEl.
 $('#qClear').onclick = () => { qEl.value = ''; qEl.blur(); $('#results').classList.add('hidden'); $('#qClear').classList.add('hidden'); };
 function showSearchHome(){
   $('#results').classList.remove('hidden'); closeSheet();
-  $('#results').innerHTML = `<div id="nearBox"></div><div class="hint home">다녀온 식당 이름을 검색해서 고르면<br>지도에 내 핀이 꽂혀요.<br><br><span class="small">예: 동성로 돈까스, 수성못 파스타</span></div>`;
+  $('#results').innerHTML = `<div id="nearBox"></div><div class="hint home">다녀온 식당 이름을 검색해서 고르면<br>지도에 내 핀이 꽂혀요.<br><br><span class="small">예: 동성로 돈까스, 수성못 파스타</span><br><span class="small">네이버·카카오 지도에서 공유한 글을 붙여넣어도 돼요</span></div>`;
   showNearby();
 }
 /* 검색창 비어 있을 때: 가까운 식당 (+ 누를 때마다 위치를 새로 받아서. 못 받으면 지도 가운데 기준) */
@@ -1647,13 +1651,29 @@ async function showNearby(){
   else if (ok()) { const h = $('#nearBox .nearh .small'); if (h) h.remove(); }
 }
 let searchSeq = 0;
+// 네이버지도·카카오맵 '공유 → 복사' 글에서 이름·주소·카카오 장소 번호를 꺼냄 (링크가 없으면 null)
+// 짧은 링크(naver.me, kko.to)는 앱 안에서 열어볼 수 없어서 같이 붙은 이름으로 찾음
+function shareLink(t){
+  if (!/https?:\/\/|naver\.me\/|kko\.to\//i.test(t)) return null;
+  const kid = (t.match(/place\.map\.kakao\.com\/(?:m\/)?(\d+)/) || [])[1] || '';
+  const lines = t.replace(/https?:\/\/\S+|(?:naver\.me|kko\.to)\/\S+/gi, '\n').split(/\n+/)
+    .map(x => x.replace(/^\s*\[[^\]]*\]\s*/, '').replace(/\s*[-|·:]?\s*(네이버\s*지도|naver\s*map|카카오\s*맵|kakao\s*map)\s*$/i, '').replace(/^(네이버\s*지도|카카오\s*맵)\s*[:\-]?\s*/i, '').replace(/^(주소|address)\s*[:：]?\s*/i, '').trim())
+    .filter(x => x && !/^(전화|tel|길찾기|영업|평점|리뷰)(\s|:|$)/i.test(x));
+  const isAddr = x => /^(서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충북|충남|충청|전북|전남|전라|경북|경남|경상|제주)/.test(x);
+  const addr = lines.find(isAddr) || '';
+  const name = (lines.find(x => !isAddr(x)) || '').slice(0, 60);
+  const m = addr.match(/(\S+(?:로|길))\s*(\d+(?:-\d+)?)/) || addr.match(/(\S+[동리가])\s*(\d+(?:-\d+)?)/);
+  return { name, addr, kid, key: m ? m[1] + ' ' + m[2] : '' };
+}
 function doSearch(){
-  const q = qEl.value.trim(); if (!q) return;
+  const raw = qEl.value.trim(); if (!raw) return;
+  const lk = shareLink(raw), q = lk ? lk.name : raw;
   const seq = ++searchSeq;
   $('#results').classList.remove('hidden'); closeSheet();
   if (!places) { $('#results').innerHTML = '<div class="hint">지도가 아직 준비되지 않았어요.</div>'; return; }
+  if (!q) { $('#results').innerHTML = '<div class="hint">링크만으로는 어느 곳인지 알 수 없어요.<br>지도 앱에서 <b>공유 → 복사</b>한 글을 통째로 붙여넣어 주세요.</div>'; return; }
   const opt = { size: 15 };
-  if (map) { opt.location = map.getCenter(); opt.sort = kakao.maps.services.SortBy.ACCURACY; }
+  if (map && !lk) { opt.location = map.getCenter(); opt.sort = kakao.maps.services.SortBy.ACCURACY; }
   places.keywordSearch(q, async (data, status) => {
     if (seq !== searchSeq || $('#results').classList.contains('hidden')) return; // 늦게 온 옛 검색 결과는 버림
     if (status === kakao.maps.services.Status.ZERO_RESULT) {
@@ -1676,7 +1696,9 @@ function doSearch(){
     }
     // 내 식당·친구 식당을 위로 (원래 순서는 유지)
     const rank = p => (cafes.some(c => c.kakaoId === p.id) || frMap.has(p.id)) ? 0 : 1;
-    data = data.map((p, i) => [p, i]).sort((a, b) => rank(a[0]) - rank(b[0]) || a[1] - b[1]).map(x => x[0]);
+    // 붙여넣은 링크면 같은 장소 번호 → 같은 주소 → 나머지 순
+    const lkRank = p => !lk ? 0 : lk.kid && p.id === lk.kid ? 0 : lk.key && `${p.road_address_name} ${p.address_name}`.includes(lk.key) ? 1 : 2;
+    data = data.map((p, i) => [p, i]).sort((a, b) => lkRank(a[0]) - lkRank(b[0]) || rank(a[0]) - rank(b[0]) || a[1] - b[1]).map(x => x[0]);
     $('#results').innerHTML = data.map((p, i) => {
       const mine = cafes.find(c => c.kakaoId === p.id), fw = frMap.get(p.id) || [];
       const frTag = fw.length ? `<span class="frmark">${IC.friends} ${esc(frName(fw[0].uid))}${fw.length > 1 ? ` 외 ${fw.length - 1}명` : ''}${fw[0].st.rating ? ` ★${fw[0].st.rating.toFixed(1)}` : fw[0].c.wish ? ' 가볼래' : ''}</span>` : '';
@@ -1893,7 +1915,7 @@ function openCafeEditor(id, seed){
     <div class="tagpick" id="cFeat" style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed var(--line)">${FEATS.map(f => `<button class="chip ${featsOf(c).includes(f)?'on':''}" data-f="${f}">${f}</button>`).join('')}</div>
     <div class="small" style="margin:0 2px 6px">분위기·상황</div>
     <div class="tagpick" id="cTags">${TAGS.filter(t => !TAGS_OPS.includes(t) && !HOURS.includes(t)).map(t => `<button class="chip ${c.tags.includes(t)?'on':''}" data-t="${esc(t)}">${esc(t)}</button>`).join('')}<div class="small" style="flex-basis:100%;margin:6px 2px 0;padding-top:10px;border-top:1px dashed var(--line)">이용</div>${TAGS_OPS.map(t => `<button class="chip ${c.tags.includes(t)?'on':''}" data-t="${esc(t)}">${esc(t)}</button>`).join('')}</div>
-    <label class="f">메모 (와이파이 비번, 주차 팁 같은 거)</label>
+    <label class="f">메모 (주차 팁, 추천 자리 같은 거)</label>
     <textarea class="inp" id="cMemo" placeholder="자유롭게 적어두세요" style="min-height:80px">${esc(c.memo)}</textarea>
     ${id ? `<div class="sec"><button class="btn danger" id="cDel" style="width:100%">이 식당 기록 전체 삭제</button></div>` : ''}`;
   $('#cFav').onclick = e => e.currentTarget.classList.toggle('on');
@@ -1973,12 +1995,17 @@ async function openVisitEditor(cafeId, visitId, pre){
     <label class="f">뭐 먹었어요?</label><input class="inp" id="vMenu" value="${esc(v.menu)}" placeholder="김치찌개, 계란말이" autocomplete="off"><div class="menusug" id="vMenuSug"></div>
     ${c.nextTry ? `<div class="small" style="margin-top:6px">${IC.cake} 다음엔 이거: ${esc(c.nextTry)} <button class="textbtn" id="vUseNext" type="button">메뉴에 넣기</button></div>` : ''}
     <label class="f">얼마 썼어요?</label><input class="inp" id="vPrice" inputmode="numeric" value="${v.price?Number(v.price).toLocaleString('ko-KR'):''}" placeholder="13,500">
-    <label class="f">후기</label><textarea class="inp" id="vReview" placeholder="맛, 양, 서비스, 웨이팅… 생각나는 대로">${esc(v.review)}</textarea>
+    <div class="tagpick" id="vPpl" style="margin-top:8px;align-items:center"><span class="small" style="margin-right:2px">몇 명이서?</span>${[1,2,3,4,5,6].map(n => `<button type="button" class="chip ${(+v.people||0)===n?'on':''}" data-n="${n}" style="font-size:12px;padding:5px 10px">${n===6?'6명+':n+'명'}</button>`).join('')}</div>
+    <div class="small" id="vPer" style="margin:6px 2px 0"></div>
+    <label class="f">후기</label><textarea class="inp" id="vReview" placeholder="맛, 양, 웨이팅, 분위기… 생각나는 대로">${esc(v.review)}</textarea>
     <div class="toggle"><div>${IC.lock} 이 방문은 친구에게 숨기기<div class="small">켜면 친구 화면에 이 방문 기록만 안 보여요</div></div><button class="sw ${v.hideFriends?'on':''}" id="vHide" aria-label="친구에게 숨기기"></button></div>
     ${visitId ? `<div class="sec"><button class="btn danger" id="vDel" style="width:100%">이 방문 기록 삭제</button></div>` : ''}`;
   setStars(v.rating);
   $('#vStars').onclick = e => { const b = e.target.closest('button'); if (!b) return; const n = +b.dataset.n; editingVisit.data.rating = editingVisit.data.rating === n ? 0 : n; setStars(editingVisit.data.rating); };
-  $('#vPrice').oninput = e => { const n = e.target.value.replace(/[^\d]/g,''); e.target.value = n ? Number(n).toLocaleString('ko-KR') : ''; };
+  const perShow = () => { const pr = +$('#vPrice').value.replace(/[^\d]/g,''), b = document.querySelector('#vPpl .chip.on'), n = b ? +b.dataset.n : 0; $('#vPer').textContent = pr && n > 1 ? `1인 ${won(Math.round(pr / n / 100) * 100)}` : pr && !n ? '인원을 고르면 1인 가격이 나와요' : ''; };
+  $('#vPrice').oninput = e => { const n = e.target.value.replace(/[^\d]/g,''); e.target.value = n ? Number(n).toLocaleString('ko-KR') : ''; perShow(); };
+  $('#vPpl').onclick = e => { const b = e.target.closest('.chip'); if (!b) return; const on = !b.classList.contains('on'); document.querySelectorAll('#vPpl .chip').forEach(x => x.classList.remove('on')); b.classList.toggle('on', on); perShow(); };
+  perShow();
   $('#vHide').onclick = e => e.currentTarget.classList.toggle('on');
   if (visitId) $('#vDel').onclick = () => deleteVisit(visitId);
   if ($('#vUseNext')) $('#vUseNext').onclick = () => { const m = $('#vMenu'); m.value = m.value.trim() ? m.value.trim() + ', ' + c.nextTry : c.nextTry; drawMenuSug(); };
@@ -2062,6 +2089,7 @@ $('#vSave').onclick = once(async () => {
   v.date = $('#vDate').value || todayStr();
   v.menu = $('#vMenu').value.trim().replace(/[,，\/\s]+$/, '');
   v.price = $('#vPrice').value.replace(/[^\d]/g,'');
+  { const b = document.querySelector('#vPpl .chip.on'); if (b) v.people = +b.dataset.n; else delete v.people; }
   v.review = $('#vReview').value.trim();
   v.hideFriends = $('#vHide').classList.contains('on');
   if (ev.newPhotos.length) loading(true, `사진 ${ev.newPhotos.length}장 저장 중…`);
@@ -2135,7 +2163,7 @@ async function openDetail(id, keep){
   const vhtml = await Promise.all(vs.map(async v => {
     const ph = await Promise.all((v.photoIds||[]).map(async (p,i) => `<div class="pol" data-ph="${p}" style="transform:rotate(${hashRot(p,i)}deg)"><div style="background-image:url('${await getPhotoURL(p)}')"></div></div>`));
     return `<div class="visit">${conflictHTML('visits', v.id)}<div class="vh"><span>${fmtDate(v.date)}${wxTag(v)}${v.hideFriends && !c.hideFriends ? ' <span class="small">' + IC.lock + ' 친구에게 숨김</span>' : ''}</span><span class="stars">${v.rating?stars(v.rating):''}</span></div>
-      <div class="note">${(v.menu||v.price)?`<div class="meta">${esc(v.menu)}${v.menu&&v.price?' · ':''}${won(v.price)}</div>`:''}${esc(v.review || '후기 없음')}</div>
+      <div class="note">${(v.menu||v.price)?`<div class="meta">${esc(v.menu)}${v.menu&&v.price?' · ':''}${won(v.price)}${v.price && +v.people > 1 ? ` (${v.people >= 6 ? '6명+' : v.people + '명'} · 1인 ${won(Math.round(v.price / v.people / 100) * 100)})` : ''}</div>`:''}${esc(v.review || '후기 없음')}</div>
       ${ph.length?`<div class="vphotos">${ph.join('')}</div>`:''}
       <div class="vacts"><button data-ev="${v.id}">수정</button></div></div>`;
   }));
@@ -2149,7 +2177,7 @@ async function openDetail(id, keep){
     <div class="subpick" id="dSub">${SUBS.map(([k, n]) => `<div class="srow" data-k="${k}"><span class="sl">${n}</span><div class="starpick">${[1,2,3,4,5].map(i => `<button data-n="${i}" aria-label="${n} ${i}점" class="${i <= (+c.sub?.[k] || 0) ? 'on' : ''}">★</button>`).join('')}</div></div>`).join('')}<div class="small" style="margin-top:2px">골라서만 매겨도 돼요. 다시 누르면 지워져요.</div></div>
     ${c.closed ? `<button class="chip movebtn" style="margin-top:12px" data-move="${esc(c.id)}">${IC.building} 이사 갔어요 · 새 위치로 기록 옮기기</button>` : ''}
     ${(c.moves || []).length ? `<div class="small" style="margin-top:10px;line-height:1.6">${c.moves.slice().reverse().map(m => `${IC.building} 이사 전: ${esc(m.name)} · ${esc(m.roadAddress || m.address || '')}${m.until ? ' (~' + esc(m.until) + ')' : ''}`).join('<br>')}</div>` : ''}
-    <div style="margin-top:12px">${kindsOf(c).map(k => '<span class="tag kind">'+esc(k)+'</span>').join('')}${featsOf(c).map(f => '<span class="tag feat">'+esc(f)+'</span>').join('')}${c.closed?'<span class="tag closedt">'+IC.door+' 문 닫음</span>':''}${c.wish?'<span class="tag wish">가볼래 ☆</span>':''}${c.fav?'<span class="tag heart">또 갈래 ♥</span>':''}${tagsOnly(c).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
+    <div style="margin-top:12px">${kindsOf(c).map(k => '<span class="tag kind">'+esc(k)+'</span>').join('')}${featsOf(c).map(f => '<span class="tag feat">'+esc(f)+'</span>').join('')}${perPerson(c) ? '<span class="tag feat">1인 '+won(perPerson(c))+'</span>' : ''}${c.closed?'<span class="tag closedt">'+IC.door+' 문 닫음</span>':''}${c.wish?'<span class="tag wish">가볼래 ☆</span>':''}${c.fav?'<span class="tag heart">또 갈래 ♥</span>':''}${tagsOnly(c).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
     <div class="stats" style="margin-top:12px"><div class="stat"><b>${st.count}</b><span>방문 기록</span></div><div class="stat"><b>${all.length}</b><span>사진</span></div><div class="stat"><b>${spent?Math.round(spent/1000)+'k':'-'}</b><span>쓴 돈</span></div></div>
     ${c.memo?`<div class="note" style="margin-top:12px"><div class="meta">메모</div>${esc(c.memo)}</div>`:''}
     <div class="nexttry" id="dNext"><span class="lb">${IC.cake} 다음엔 이거</span><span class="v">${c.nextTry ? esc(c.nextTry) : '<span style="color:var(--sub)">먹어보고 싶은 메뉴를 적어두세요</span>'}</span><button class="textbtn" id="dNextEdit">${c.nextTry ? '수정' : '적기'}</button></div>
@@ -3594,6 +3622,8 @@ function openPick(){
     <div class="tagpick">${chips([['전체','전체'],['다녀왔어 ♪','다녀왔어 ♪'],['또 갈래','또 갈래 ♥'],['가볼래','가볼래 ☆']], pickOpt.scope, 'sc')}</div>
     <label class="f">얼마나 가까이?</label>
     <div class="tagpick">${chips([[0,'상관없음'],[0.5,'500m'],[1,'1km'],[3,'3km'],[10,'10km']], pickOpt.dist, 'ds')}</div>
+    <label class="f">1인 얼마까지? <span class="small" style="font-weight:400">(인원 적은 기록이 있는 곳만)</span></label>
+    <div class="tagpick">${chips([[0,'상관없음'],[10000,'1만원'],[20000,'2만원'],[30000,'3만원']], pickOpt.price || 0, 'pr')}</div>
     ${session ? `<div class="toggle" style="margin-top:14px"><div>${IC.friends} 친구 식당도 넣기<div class="small">친구가 다녀왔거나 가볼래에 담은 곳 중에서도 골라요</div></div><button class="sw ${pickOpt.friends ? 'on' : ''}" id="pickFr" aria-label="친구 식당도 넣기"></button></div>` : ''}
     ${usedK.length ? `<label class="f">뭐 먹을까? (여러 개 고르면 그중 하나)</label><div class="tagpick">${usedK.map(t => `<button class="chip ${pickOpt.tags.includes(t)?'on':''}" data-tg="${esc(t)}">${esc(t)}</button>`).join('')}</div>` : ''}
     ${usedF.length ? `<label class="f">땡기는 거 (여러 개 고르면 그중 하나)</label><div class="tagpick">${usedF.map(t => `<button class="chip ${pickOpt.tags.includes(t)?'on':''}" data-tg="${esc(t)}">${esc(t)}</button>`).join('')}</div>` : ''}
@@ -3603,14 +3633,23 @@ function openPick(){
   $('#pickBody').onclick = async e => {
     const sc = e.target.closest('[data-sc]'), ds = e.target.closest('[data-ds]'), tg = e.target.closest('[data-tg]');
     if (sc) { pickOpt.scope = sc.dataset.sc; sc.parentElement.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === sc)); }
+    { const pr = e.target.closest('[data-pr]'); if (pr) { pickOpt.price = +pr.dataset.pr; pr.parentElement.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === pr)); } }
     if (ds) { pickOpt.dist = +ds.dataset.ds; ds.parentElement.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === ds)); }
     if (tg) { const t = tg.dataset.tg; tg.classList.toggle('on'); pickOpt.tags = tg.classList.contains('on') ? [...pickOpt.tags, t] : pickOpt.tags.filter(x => x !== t); }
     if (e.target.closest('#pickFr')) { pickOpt.friends = !pickOpt.friends; $('#pickFr').classList.toggle('on', pickOpt.friends); return; }
     if (e.target.closest('#pickGo') || e.target.closest('[data-again]')) await doPick();
+    if (e.target.closest('[data-pshare]') && pickShown) { sharePlace(pickShown); return; }
     const go = e.target.closest('[data-goto]'); if (go) { closePage('pPick'); showTab('map'); openSheet(go.dataset.goto); }
     const fg = e.target.closest('[data-fgoto]'); if (fg) { const [u, cid] = fg.dataset.fgoto.split('|'); const c = FR.data.get(u)?.cafes.find(x => x.id === cid); if (c) { closePage('pPick'); showTab('map'); await setFriendPins(true); openFriendSheet(u, c, true); } }
   };
   openPage('pPick');
+}
+// 뽑힌 곳 보내기: 이름·주소·지도 링크 (받은 사람이 이 앱 검색창에 붙여넣어도 바로 찾아짐)
+let pickShown = null;
+async function sharePlace(c){
+  const text = [c.name, c.roadAddress || c.address || ''].filter(Boolean).join('\n'), url = kakaoUrl(c);
+  if (navigator.share) { try { await navigator.share({ title: c.name, text, url }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
+  try { await navigator.clipboard.writeText(text + '\n' + url); toast('복사했어요. 붙여넣어서 보내면 돼요'); } catch { toast('복사하지 못했어요'); }
 }
 const DIE_FACES = [[4],[0,8],[0,4,8],[0,2,6,8],[0,2,4,6,8],[0,2,3,5,6,8]];
 let rolling = false;
@@ -3640,6 +3679,7 @@ async function doPickInner(){
     if (pickOpt.scope === '또 갈래' && !c.fav) return false;
     if (!passTags(c, pickOpt.tags)) return false;
     if (pickOpt.dist && distKm(myPos, c) > pickOpt.dist) return false;
+    if (pickOpt.price && !(perPerson(c) && perPerson(c) <= pickOpt.price)) return false;
     return true;
   });
   // 친구 식당도 넣기: 내 기록에 없는 친구 식당 (같은 곳을 여러 친구가 갔으면 한 번만)
@@ -3654,6 +3694,7 @@ async function doPickInner(){
         if (pickOpt.scope === '또 갈래' && !c.fav) continue;
         if (!passTags(c, pickOpt.tags)) continue;
         if (pickOpt.dist && distKm(myPos, c) > pickOpt.dist) continue;
+        if (pickOpt.price) continue; // 친구 식당은 1인 가격을 몰라서 뺌
         seen.add(key); cand.push({ ...c, _fr: u, _st: st });
       }
     }
@@ -3669,14 +3710,14 @@ async function doPickInner(){
     const url = await frPhoto(c._fr, c._st.cover);
     await rollDice(cand.length > 1 ? cand.map(x => x.name) : [c.name]);
     const d = myPos ? distKm(myPos, c) : null, lv = c._st.last;
-    $('#pickRes').innerHTML = `<div class="pickres pop">
+    pickShown = c; $('#pickRes').innerHTML = `<div class="pickres pop">
       <div class="small" style="margin-bottom:8px">${total}곳 중에 골랐어요 · ${IC.friends} ${esc(frName(c._fr))}님 식당</div>
       ${url ? `<div class="pols" style="height:150px;width:130px;margin:0 auto"><div class="pol" style="left:0;top:4px;transform:rotate(-3deg)"><div style="background-image:url('${url}')"></div></div></div>` : cupIcon(c.id, c)}
       <div class="title" style="margin-top:6px">${esc(c.name)}</div>
       <div class="subt">${esc(shortAddr(c))}${d != null ? ' · ' + fmtDist(d) : ''}${c._st.rating ? ' · ★ ' + c._st.rating.toFixed(1) : ''}</div>
       ${lv && lv.review ? `<div class="note" style="margin-top:6px;text-align:left;background:var(--bg)">${esc(lv.review)}</div>` : ''}
       <div class="btnrow"><button class="btn" data-fgoto="${c._fr}|${esc(c.id)}">지도에서 보기</button><button class="btn ghost" data-again="1">다시 뽑기</button></div>
-      <div class="linkrow"><a class="btn route nroute" href="${naverUrl(c)}" data-nr="${c.lat},${c.lng}" data-nn="${esc(c.name)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 11 22 2l-9 19-2-8z"/></svg>길찾기</a><a class="btn naver" href="${naverUrl(c)}" target="_blank" rel="noopener">네이버지도</a></div>
+      <div class="linkrow"><a class="btn route nroute" href="${naverUrl(c)}" data-nr="${c.lat},${c.lng}" data-nn="${esc(c.name)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 11 22 2l-9 19-2-8z"/></svg>길찾기</a><a class="btn naver" href="${naverUrl(c)}" target="_blank" rel="noopener">네이버지도</a><button class="btn ghost" data-pshare="1">보내기</button></div>
     </div>`;
     $('#pickRes').scrollIntoView({ behavior: 'smooth', block: 'start' });
     return;
@@ -3689,7 +3730,7 @@ async function doPickInner(){
   const urls = await urlsP;
   const d = myPos ? distKm(myPos, c) : null;
   const lv = st.lastVisit;
-  $('#pickRes').innerHTML = `<div class="pickres pop">
+  pickShown = c; $('#pickRes').innerHTML = `<div class="pickres pop">
     <div class="small" style="margin-bottom:8px">${total}곳 중에 골랐어요</div>
     ${ids.length ? polaroids(ids, urls) : cupIcon(c.id, c)}
     <div class="title" style="margin-top:6px">${c.wish ? '<span style="color:var(--sub)">☆</span> ' : ''}${esc(c.name)}</div>
@@ -3697,7 +3738,7 @@ async function doPickInner(){
     <div style="margin-top:8px">${tagsOnly(c).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
     ${lv && lv.review ? `<div class="note" style="margin-top:6px;text-align:left;background:var(--bg)">${esc(lv.review)}</div>` : ''}
     <div class="btnrow"><button class="btn" data-goto="${c.id}">지도에서 보기</button><button class="btn ghost" data-again="1">다시 뽑기</button></div>
-    <div class="linkrow"><a class="btn route nroute" href="${naverUrl(c)}" data-nr="${c.lat},${c.lng}" data-nn="${esc(c.name)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 11 22 2l-9 19-2-8z"/></svg>길찾기</a><a class="btn naver" href="${naverUrl(c)}" target="_blank" rel="noopener">네이버지도</a></div>
+    <div class="linkrow"><a class="btn route nroute" href="${naverUrl(c)}" data-nr="${c.lat},${c.lng}" data-nn="${esc(c.name)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 11 22 2l-9 19-2-8z"/></svg>길찾기</a><a class="btn naver" href="${naverUrl(c)}" target="_blank" rel="noopener">네이버지도</a><button class="btn ghost" data-pshare="1">보내기</button></div>
   </div>`;
   $('#pickRes').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -4388,7 +4429,7 @@ function shareSheet(c, pan){
   $('#sheet').innerHTML = `<div class="grab"></div>
     ${c.thumb ? `<div class="pols" style="height:150px"><div class="pol" style="left:0;top:4px;transform:rotate(-3deg)"><div style="background-image:url('${c.thumb}')"></div></div></div>` : ''}
     <div class="rowsb"><div style="min-width:0"><div class="title">${esc(c.name)}</div><div class="subt">${esc(shortAddr(c))}${c.category ? ' · ' + esc(c.category.split(' > ').pop()) : ''}</div>${hrsOf(c).length ? '<div class="subt">' + esc(hrsOf(c).join(' · ')) + '</div>' : ''}</div>${c.rating ? `<div class="score">★ ${c.rating.toFixed(1)}</div>` : ''}</div>
-    <div style="margin-top:10px">${kindsOf(c).map(k => '<span class="tag kind">'+esc(k)+'</span>').join('')}${featsOf(c).map(f => '<span class="tag feat">'+esc(f)+'</span>').join('')}${c.closed?'<span class="tag closedt">'+IC.door+' 문 닫음</span>':''}${c.wish ? '<span class="tag wish">가볼래 ☆</span>' : ''}${c.fav ? '<span class="tag heart">또 갈래 ♥</span>' : ''}${tagsOnly(c).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
+    <div style="margin-top:10px">${kindsOf(c).map(k => '<span class="tag kind">'+esc(k)+'</span>').join('')}${featsOf(c).map(f => '<span class="tag feat">'+esc(f)+'</span>').join('')}${perPerson(c) ? '<span class="tag feat">1인 '+won(perPerson(c))+'</span>' : ''}${c.closed?'<span class="tag closedt">'+IC.door+' 문 닫음</span>':''}${c.wish ? '<span class="tag wish">가볼래 ☆</span>' : ''}${c.fav ? '<span class="tag heart">또 갈래 ♥</span>' : ''}${tagsOnly(c).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
     ${c.review || c.menu ? `<div class="note" style="margin-top:8px">${c.menu ? `<div class="meta">${esc(c.menu)}</div>` : ''}${esc(c.review || '')}</div>` : ''}
     <div class="linkrow" style="margin-top:14px">
       <a class="btn kakao" href="${kakaoUrl(c)}" target="_blank" rel="noopener">카카오맵</a>
@@ -4519,7 +4560,7 @@ async function refreshAll(){
 /* =========================================================
    앱 업데이트 (홈 화면에 깔린 앱이 옛 화면을 붙잡고 있을 때)
    ========================================================= */
-const APP_VERSION = '2026.11.21-14'; // 고칠 때마다 올림
+const APP_VERSION = '2026.11.21-15'; // 고칠 때마다 올림
 // 새 버전 확인: 파일 맨 앞 2KB만 받아서 버전 표시만 읽음 (안 되면 전체를 받아 확인)
 async function latestVersion(){
   try {
